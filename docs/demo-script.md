@@ -15,6 +15,8 @@ This demo app can be used to show a number of Copilot features:
 - **Infrastructure as Code**: generate Bicep or Terraform files for publishing
 - **Padawan (SWE Agent)**: You can also ask Copilot to code via Padawan for some of the above scenarios by logging issues and assigning them to Copilot
 
+> Note: For the most basic "What can Copilot do?" scenario, use the `demo-unit-test-coverage` prompt to have Agent Mode add some unit tests.
+
 ### **About Up the Demo**
 
 - **About the App:** This is a modern TypeScript web-app with separate API and Frontend (React) projects that you will enhance with Copilot Agent Mode, Vision, MCP Servers and GHAS/Actions.
@@ -103,6 +105,8 @@ You can also use the Command Palette to start the MCP servers.
 
 ### **Demo: Using Vision and Agent to Generate Cart Functionality**  
 
+> Note: If you want a "quickstart" version of this, then use the `demo-cart-page` prompt. This will prompt Agent Mode to implement the Cart Page for you automatically.
+
 - **What to show:** "Vibe coding" using Agent Mode and Vision to complete complex tasks.
 - **Why:** Demonstrate how Copilot Vision can detect design and how Agent can understand a codebase and create complex changes over multiple files.
 - **How:**  
@@ -151,6 +155,10 @@ You can also use the Command Palette to start the MCP servers.
   1. (Optional): Assign the issue to Copilot to queue off Padawan!
 
 ### **Demo: Enhancing Unit Tests and Coverage**  
+
+> Note: If you want a "quickstart" version of this, then use the `demo-unit-test-coverage` prompt. This will prompt Agent Mode to implement unit tests for Product and Supplier for you automatically.
+
+> Note: If you want to demo Coding Agent, there is an Issue for improving Code Coverage on the repo - it should be Issue #1 (created as part of the demo spinup). Assign this to Copilot - that's it. This takes about 15 mins, so do this ahead of time if necessary!
 
 - **What to show:** Copilot generating a multiple tests, exucuting them, analyzing coverage and self-healing.
 - **Why:** Show Copilot’s ability to quickly and easily generate tests, validate them, self-heal and analyze coverage.
