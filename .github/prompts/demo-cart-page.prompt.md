@@ -22,6 +22,7 @@ Implement a complete Cart system including:
 3. Cart state management across the application
 4. Free shipping for orders over $100, otherwise $25 shipping fee
 5. Add/remove items functionality
+6. Remove the alert message when adding items to the cart
 
 ## Design Reference
 Use the provided cart design image (../docs/design/cart.png) as the visual reference for implementation. The design shows:
