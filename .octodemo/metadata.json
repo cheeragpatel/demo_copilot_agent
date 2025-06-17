@@ -5,7 +5,7 @@
   "demoContents": {
     "copilot-agent-mode": {
       "url": "./",
-      "mainBranch": "main",
+      "mainBranch": "nodejs",
       "additionalBranches": [
         "dotnet",
         "java",

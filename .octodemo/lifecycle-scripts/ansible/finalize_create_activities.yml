@@ -28,6 +28,10 @@
       set_fact:
         repository_api_url: "{{ context.demo_instance_context.demo_org.github_api_url }}/repos/{{ context.demo_instance_context.demo_org.owner }}/{{ context.demo_instance_context.demo_instance_name }}"
 
+    - name: Load issue content from JSON file
+      set_fact:
+        body: "{{ lookup('file', 'unittest-issue-' + context.demo_instance_context.demo_options.backend + '.md') }}"
+
     - name: Create GitHub issue
       uri:
         url: "{{ repository_api_url }}/issues"
@@ -38,148 +42,8 @@
           Content-Type: "application/json"
         body_format: json
         body:
-          title: "Improve test coverage for API routes and models"
-          body: |
-            # 🧪 Improve API Test Coverage - Add Unit Tests for Missing Routes
-
-            ## 📊 Current State
-            - **Overall test coverage: 45.49%** (308/677 statements)
-            - **Routes coverage: 11.3%** (38/336 statements) 
-            - **Models coverage: 0%** (0/336 statements)
-            - Only **1 test file exists**: `branch.test.ts`
-
-            ## 🎯 Objective
-            Increase API test coverage to **85%+** by implementing comprehensive unit tests for all routes and models.
-
-            ## 📋 Missing Test Files
-
-            ### 🔗 Route Tests (High Priority)
-            The following route files need complete test coverage:
-
-            - [ ] `src/routes/delivery.test.ts`
-            - [ ] `src/routes/headquarters.test.ts` 
-            - [ ] `src/routes/order.test.ts`
-            - [ ] `src/routes/orderDetail.test.ts`
-            - [ ] `src/routes/orderDetailDelivery.test.ts`
-            - [ ] `src/routes/product.test.ts`
-            - [ ] `src/routes/supplier.test.ts`
-
-            ### 🏗️ Model Tests (Medium Priority)
-            The following model files need validation tests:
-
-            - [ ] `src/models/delivery.test.ts`
-            - [ ] `src/models/headquarters.test.ts`
-            - [ ] `src/models/order.test.ts`
-            - [ ] `src/models/orderDetail.test.ts`
-            - [ ] `src/models/orderDetailDelivery.test.ts`
-            - [ ] `src/models/product.test.ts`
-            - [ ] `src/models/supplier.test.ts`
-            - [ ] `src/models/branch.test.ts`
-
-            ## ✅ Test Coverage Requirements
-
-            ### For Each Route Test File:
-            - **CRUD Operations:**
-              - ✅ GET all entities
-              - ✅ GET single entity by ID
-              - ✅ POST create new entity
-              - ✅ PUT update existing entity
-              - ✅ DELETE entity by ID
-
-            - **Error Scenarios:**
-              - ❌ 404 for non-existent entities
-              - ❌ 400 for invalid request payloads
-              - ❌ 422 for validation errors
-              - ❌ Edge cases (malformed IDs, empty requests)
-
-            ### For Each Model Test File:
-            - Data structure validation
-            - Property types and constraints
-            - Default values
-            - Business logic validation
-            - Serialization/deserialization
-
-            ## 🛠️ Implementation Guidelines
-
-            ### Use Existing Pattern
-            Follow the pattern established in `src/routes/branch.test.ts`:
-            ```typescript
-            import { describe, it, expect, beforeEach } from 'vitest';
-            import request from 'supertest';
-            import express from 'express';
-            ```
-
-            ### Test Structure Template
-            ```typescript
-            describe('[Entity] API', () => {
-                beforeEach(() => {
-                    // Setup app and reset data
-                });
-
-                it('should create a new [entity]', async () => { /* POST test */ });
-                it('should get all [entities]', async () => { /* GET all test */ });
-                it('should get a [entity] by ID', async () => { /* GET by ID test */ });
-                it('should update a [entity] by ID', async () => { /* PUT test */ });
-                it('should delete a [entity] by ID', async () => { /* DELETE test */ });
-                it('should return 404 for non-existing [entity]', async () => { /* Error test */ });
-            });
-            ```
-
-            ## 🎯 Coverage Targets
-
-            ### Phase 1: Routes (Immediate)
-            - **Target: 80%+ route coverage**
-            - Focus on happy path CRUD operations
-            - Use `branch.test.ts` as template
-
-            ### Phase 2: Error Handling (Short-term)
-            - **Target: 90%+ route coverage**
-            - Add comprehensive error scenarios
-            - Add edge case validation
-
-            ### Phase 3: Models & Integration (Medium-term)
-            - **Target: 70%+ overall coverage**
-            - Add model validation tests
-            - Add cross-entity relationship tests
-
-            ### Phase 4: Comprehensive (Long-term)
-            - **Target: 85%+ overall coverage**
-            - Add application-level tests
-            - Add performance testing
-
-            ## 🔧 Running Tests
-
-            ```bash
-            # Run all tests
-            npm run test:api
-
-            # Run tests with coverage
-            npm run test:api -- --coverage
-
-            # Run specific test file
-            npm run test:api -- src/routes/product.test.ts
-            ```
-
-            ## 📈 Success Criteria
-            - [ ] All 8 missing route test files created
-            - [ ] All 8 model test files created
-            - [ ] Overall test coverage ≥ 85%
-            - [ ] Route coverage ≥ 90%
-            - [ ] Model coverage ≥ 70%
-            - [ ] All tests passing in CI/CD
-
-            ## 🚀 Getting Started
-            1. Start with `product.test.ts` - copy `branch.test.ts` pattern
-            2. Implement basic CRUD tests first
-            3. Add error scenarios incrementally
-            4. Run coverage after each file to track progress
-            5. Follow ERD relationships for cross-entity testing
-
-            ## 📚 Related Files
-            - ERD Diagram: `api/ERD.png`
-            - Existing test: `api/src/routes/branch.test.ts`
-            - Test config: `api/vitest.config.ts`
-            - Coverage report: `api/coverage/index.html`
+          title: "Improve test coverage for API"
+          body: "{{ body }}"
           labels:
             - "demo"
             - "quality"  
@@ -196,3 +60,64 @@
           - Issue Number: {{ issue_creation_result.json.number }}
           - Issue URL: {{ issue_creation_result.json.html_url }}
           - Title: {{ issue_creation_result.json.title }}
+    
+    - name: Get list of all branches
+      uri:
+        url: "{{ repository_api_url }}/branches"
+        method: GET
+        headers:
+          Accept: application/vnd.github.v3+json
+          Authorization: bearer {{ github_token }}
+        status_code: 200
+      register: branches_result
+      retries: 3
+      delay: 5
+      until: branches_result.status == 200
+      
+    - name: Set default branch to backend branch
+      uri:
+        url: "{{ repository_api_url }}"
+        method: PATCH
+        headers:
+          Accept: application/vnd.github.v3+json
+          Authorization: bearer {{ github_token }}
+        body_format: json
+        body:
+          default_branch: "{{ context.demo_instance_context.demo_options.backend }}"
+        status_code: 200
+      register: set_default_branch_result
+      retries: 3
+      delay: 5
+      until: set_default_branch_result.status == 200
+      when: context.demo_instance_context.demo_options.backend != "nodejs"
+
+    - name: Delete branches other than the backend branch
+      uri:
+        url: "{{ repository_api_url }}/git/refs/heads/{{ item.name }}"
+        method: DELETE
+        headers:
+          Accept: application/vnd.github.v3+json
+          Authorization: bearer {{ github_token }}
+        status_code: [204, 422]  # 422 for protected branches that can't be deleted
+      register: delete_branch_result
+      retries: 3
+      delay: 5
+      until: delete_branch_result.status in [204, 422]
+      loop: "{{ branches_result.json }}"
+      when: item.name != context.demo_instance_context.demo_options.backend
+
+    - name: Rename the branch to main
+      uri:
+        url: "{{ repository_api_url }}/branches/{{ context.demo_instance_context.demo_options.backend }}/rename"
+        method: POST
+        headers:
+          Accept: application/vnd.github.v3+json
+          Authorization: bearer {{ github_token }}
+        body_format: json
+        body:
+          new_name: "main"
+        status_code: 201
+      register: rename_branch_result
+      retries: 3
+      delay: 5
+      until: rename_branch_result.status == 201

@@ -1,0 +1,12 @@
+- type: dropdown
+  attributes:
+    label: "Backend"
+    description: "This option defines the language for the API project - the frontend remains NodeJS/React."
+    options:
+      - "nodejs"
+      - "java"
+      - "python"
+      - "dotnet"
+    default: 0
+  validations:
+    required: true
