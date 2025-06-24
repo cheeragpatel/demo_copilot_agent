@@ -2,6 +2,7 @@
   "name": "GitHub Copilot Agent Mode",
   "shortname": "copilot-agent-mode",
   "version": "latest",
+  "shortDescription": "A comprehensive demonstration of GitHub Copilot's advanced AI capabilities using the OctoCat Supply web application. This demo showcases Copilot Agent Mode with Vision for implementing complex UI features, MCP server integration for extended capabilities, automated testing with coverage analysis, security scanning with AI-powered fixes, and DevOps automation—all through natural language prompts.",
   "demoContents": {
     "copilot-agent-mode": {
       "url": "./",
