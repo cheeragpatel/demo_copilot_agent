@@ -6,45 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish:
-    permissions:
-      packages: write
-      contents: write
-      pull-requests: write
-      issues: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fetch GitHub token for gh-octodemo-cli-app
-        id: gh_octodemo_cli_app
-        uses: peter-murray/workflow-application-token-action@v3
-        with:
-          application_id: ${{ vars.OD_GH_OCTODEMO_CLI_INSTALLATION_APPLICATION_ID }}
-          application_private_key: ${{ secrets.OD_GH_OCTODEMO_CLI_INSTALLATION_APPLICATION_KEY }}
-          organization: octodemo-resources
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Needs all branches to create the release
-      - name: Install gh-octodemo
-        shell: bash
-        env:
-          GH_TOKEN: ${{ steps.gh_octodemo_cli_app.outputs.token }}
-        run: |
-          gh extension install octodemo-resources/gh-octodemo --pin ${{ vars.OD_GH_OCTODEMO_CLI_VERSION }} --force
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22.x'
-      - name: Install Semantic Release dependencies
-        run: npm ci --ignore-scripts
-        working-directory: .od-semantic-release
-      - name: Run Semantic Release
-        run: npx semantic-release --extends ./.od-semantic-release/release.config.mjs
-        env:
-          # Semantic Release environment variables
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Octodemo CLI environment variables
-          WORKING_DIR: ${{ github.workspace }}
-          ## Using CLI_GH_TOKEN instead of GH_TOKEN to not conflict with Semantic Release
-          CLI_GH_TOKEN: ${{ steps.gh_octodemo_cli_app.outputs.token }}
-          OD_OCTODEMO_FRAMEWORK_APP_ID: ${{ vars.OD_OCTODEMO_DEMO_RELEASE_APP_ID }}
-          OD_OCTODEMO_FRAMEWORK_APP_KEY: ${{ secrets.OD_OCTODEMO_DEMO_RELEASE_APP_KEY }}
+  publish-release:
+    uses: octodemo-framework/od_demo-template-release-helper/.github/workflows/publish-release.yml@main
+    with:
+      od_gh_octodemo_cli_version: ${{ vars.OD_GH_OCTODEMO_CLI_VERSION }}
+      od_octodemo_demo_release_app_id: ${{ vars.OD_OCTODEMO_DEMO_RELEASE_APP_ID }}
+      od_gh_octodemo_cli_installation_application_id: ${{ vars.OD_GH_OCTODEMO_CLI_INSTALLATION_APPLICATION_ID }}
+      main_branch: 'nodejs'
+    secrets:
+      od_gh_octodemo_cli_installation_application_key: ${{ secrets.OD_GH_OCTODEMO_CLI_INSTALLATION_APPLICATION_KEY }}
+      od_octodemo_demo_release_app_key: ${{ secrets.OD_OCTODEMO_DEMO_RELEASE_APP_KEY }}
