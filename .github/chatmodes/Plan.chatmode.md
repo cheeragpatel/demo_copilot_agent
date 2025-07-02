@@ -1,5 +1,5 @@
 ---
-description: 'REQUIRES INSIDERS: Plan changes to the codebase.'
+description: 'Plan changes to the codebase without changing any code.'
 tools: ['codebase', 'usages', 'changes', 'fetch', 'githubRepo', 'search']
 ---
 
