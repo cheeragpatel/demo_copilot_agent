@@ -5,7 +5,7 @@ This demo app can be used to show a number of Copilot features:
 - **Agent Mode and Vision**: generate a fairly complex UI updated (add the Cart functionality to the site) all with a natural language prompt and an image
 - **Unit Testing**: run and generate unit tests to improve coverage
 - **MCP Server**: 
-  - generate a `.feature` file (Behaviour Driven Development/Tesing file)and use Playwright to launch a browser and test the scenario
+  - generate a `.feature` file (Behaviour Driven Development/Testing file)and use Playwright to launch a browser and test the scenario
   - Interact with GitHub via the GitHub MCP server
 - **Custom instructions**: personalize how Copilot responds by pointing to a fictional private observability framework that Copilot can work with, even though it is not a public library
 - **Security**: 
@@ -250,15 +250,15 @@ You can also use the Command Palette to start the MCP servers.
 - **What to show:** Using the custom `/handoff` prompt to hand off Ask/Agent work to another session with proper context preservation.
 - **Why:** Demonstrate how custom prompts can control context, drop unnecessary information, and efficiently hand off work between Chat/Agent sessions or team members.
 - **How:**  
-  1. Open Copilot Chat and switch to `Ask` mode.
-  1. Enter `/plan I want to add Personal Profile page to the app that shows the user profile and their purchases.`
+  1. Open Copilot Chat and switch to `Plan` mode.
+  1. Enter `I want to add Personal Profile page to the app that shows the user profile and their purchases.`
   1. Show the output and ask Copilot to change something in the plan: for example, remove the `purchases` part
   1. **Explain the Context Problem**: Currently the entire conversation is in the context, which over time grows long and can consume too much of the context window. Custom prompts can solve this by creating clean handoffs.
   1. **Show the Custom Prompt**: Open the [handoff.prompt.md](../.github/prompts/handoff.prompt.md) file in the prompts directory. Point out:
      - The YAML frontmatter configuring it as an Agent mode prompt
      - The internal thinking process in HTML comments (not shown to user)
      - The structured template for consistent handoffs
-  1. **Run the Prompt**: Click the "Run" button or use Command Palette → "Prompts: Run Prompt" to execute the handoff prompt
+  1. **Run the Prompt**: Click the "Run" button, use Command Palette → "Prompts: Run Prompt" or type `/handoff` in the chat to execute the handoff prompt
   1. **Show Results**: Display the generated `handoff.md` document. It should contain:
      - Clean summary without noise from the conversation
      - Gathered information and requirements
@@ -271,6 +271,39 @@ You can also use the Command Palette to start the MCP servers.
      - Team collaboration and handoffs
      - Preserving important decisions while removing noise
   1. **Cleanup**: You can revert the changes to the `handoff.md` file after the demo.
+
+### **Demo: Using `/handoff-to-copilot-coding-agent` Custom Prompt for Async Session Continuation**
+- **What to show:** Using the custom `/handoff-to-copilot-coding-agent` prompt to hand off current plan work to GitHub Copilot Coding Agent with proper context preservation.
+- **Why:** Demonstrate how custom prompts can encapsulate IDE tools and MCP tools calls into a cohesive workflow.
+
+- **How:**  
+  1. Make sure that you have Remote GitHub MCP Server running.
+  1. Open Copilot Chat and switch to `Plan` Chat Mode.
+  1. Enter `I want to add Personal Profile page to the app that shows the user profile and their purchases.`
+  1. Show the output and ask Copilot to change something in the plan: for example, remove the `purchases` part
+  1. **Explain Time Constraints**: We have a detailed plan now, Copilot Agent can follow it and implement the desired feature, however, in order to use our time efficiently we can hand off the implementation to the Copilot Agent, allowing us to focus on other tasks (or showing other copilot features in this demo).
+  1. **Show the Custom Prompt**: Open the [handoff-to-copilot-coding-agent.prompt.md](../.github/prompts/handoff-to-copilot-coding-agent.prompt.md) file in the prompts directory. Point out:
+     - The YAML frontmatter configuring it as an Agent mode prompt
+     - The internal thinking process in HTML comments (not shown to user)
+     - The structured issue template for consistent handoffs
+     - Use of tools like `changes`, `create_issue`, and `assign_copilot_to_issue`.
+     - Show how to configure the tools (click 'Configure Tools' link above `tools: []` line)
+  1. **Run the Prompt**: 
+   - *Important* We're in the 'Plan' Chat Mode now, and it has a limited set of tools available. We need to switch to `Agent` mode to use /handoff-to-copilot-coding-agent prompt. At the moment we cannot force switch the mode.
+  - Click the "Run" button, use Command Palette → "Prompts: Run Prompt" or type `/handoff-to-copilot-coding-agent` to execute the handoff prompt
+  1. **Show Results**: Display the generated output, it should contain a call to GitHub MCP and a short summary with the Issue link.
+     - Clean summary without noise from the conversation
+     - Gathered information and requirements
+     - The refined plan (without the removed `purchases` part)
+  
+  Open GitHub repository and how the new issue. Demonstate that it's been assigned to GitHub Copilot Coding Agent and it started the session.
+
+  1. **Complete the Handoff**: You can now stop the session if you don't need this implementation for your demo.
+
+  1. **Best Practices**: Explain that custom prompts are valuable for:
+   - Codifying repetitive parts of existing workflows
+   - Improving the discoverability of available Copilot use cases
+
 
 ## **Key Takeaways for Customers**  
 
