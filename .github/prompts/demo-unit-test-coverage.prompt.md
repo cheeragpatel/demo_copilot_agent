@@ -68,7 +68,7 @@ describe('[Entity] API', () => {
 npm run test:api
 
 # Run tests with coverage
-npm run test:api -- --coverage
+npm run test:api -- -- --coverage
 
 # Run specific test file
 npm run test:api -- src/routes/product.test.ts
