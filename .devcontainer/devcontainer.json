@@ -29,7 +29,8 @@
 				"ms-vscode.vscode-speech",
 				"Blodwynn.featurehighlight",
 				"bierner.markdown-mermaid",
-				"ms-azuretools.vscode-bicep"
+				"ms-azuretools.vscode-bicep",
+				"GitHub.vscode-pull-request-github"
 			],
 			"settings": {
 				"editor.inlineSuggest.experimentalInlineEditsEnabled": true,
