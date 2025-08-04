@@ -304,6 +304,14 @@ You can also use the Command Palette to start the MCP servers.
    - Codifying repetitive parts of existing workflows
    - Improving the discoverability of available Copilot use cases
 
+### **Demo: Using Coding Agent to Experiment in Parallel**  
+
+- **What to show:** Cerating 3 variations of the Cart page in parallel.
+- **Why:** Experimentation can be time-consuming and costly - unless you get coding agent to do it for you - in parallel! Then you can choose the option you like the best.
+- **How:**  
+  1. Make sure you have the GitHub Remote MCP server running
+  2. Run the `demo-cca-parallel` prompt using the Command Palette
+  3. **Note**: This takes a couple minutes to create the Issues and then Coding Agent takes about 20 minutes to complete the code changes, so be prepared for other demos or do this before your live demo and just show the results.
 
 ## **Key Takeaways for Customers**  
 
