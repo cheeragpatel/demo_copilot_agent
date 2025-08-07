@@ -306,12 +306,36 @@ You can also use the Command Palette to start the MCP servers.
 
 ### **Demo: Using Coding Agent to Experiment in Parallel**  
 
-- **What to show:** Cerating 3 variations of the Cart page in parallel.
+- **What to show:** Creating 3 variations of the Cart page in parallel.
 - **Why:** Experimentation can be time-consuming and costly - unless you get coding agent to do it for you - in parallel! Then you can choose the option you like the best.
 - **How:**  
   1. Make sure you have the GitHub Remote MCP server running
   2. Run the `demo-cca-parallel` prompt using the Command Palette
   3. **Note**: This takes a couple minutes to create the Issues and then Coding Agent takes about 20 minutes to complete the code changes, so be prepared for other demos or do this before your live demo and just show the results.
+
+### **Demo: Self-healing DevOps**
+
+- **What to show:** Coding Agent can self-heal failing Actions workflows.
+- **Why:** Many times failing CI/CD pipelines can be fixed by simple changes - this demo shows how you can use GitHub Copilot (via the [ai-inference Action](https://github.com/actions/ai-inference)) to self-heal failing jobs.
+- **How:**  
+  1. You will need to generate a PAT since the prompt for analyzing the failed job uses MCP. Navigate to your GitHub Developer Settings and generate a Fine-grained token with the following permissions:
+     1. Org level: `Models` read-only
+     2. Repo level: `Actions` read-only, `Contents` read-only, `Issues` read/write
+  2. In the repo, navigate to Settings and add a new Actions repository secret called `AUTO_REMEDIATION_PAT` with your PAT
+  3. Create a failure in the code
+     1. Edit the [branch.ts route file](api/src/routes/branch.ts)
+     2. Find the put method and insert a breaking change:
+        ```javascript
+        if (index !== -1) {
+          branches[index] = req.body;
+          branches[index].name += ` (updated)`; // <-- add this line
+        ```
+      3. Commit and push
+   4. This will trigger the `ci` workflow, which will fail
+   5. The failure in turn triggers the `auto-analyze-failures` workflow, which will analyze the build failure, create an Issue and assign it to Copilot
+   6. Coding Agent will create the PR to fix the issue by reverting the line that broke the test
+   7. **Note**: This whole workflow takes a few minutes, so if you're going to show this, you may want to run this before your demo.
+   8. The [failed-run-analyze.prompt.yml]().github/models/failed-run-analyze.prompt.yml) file contains the prompt used in the workflow to analyze the build failure. You can open this in the Models tab in the repo, but it requires MCP so you won't be able to test it fully in Models.
 
 ## **Key Takeaways for Customers**  
 
