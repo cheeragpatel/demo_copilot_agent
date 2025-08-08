@@ -76,11 +76,16 @@ jobs:
           }
 
     - name: Log parse values
+      env:
+        CATEGORY: ${{ steps.parse.outputs.category }}
+        SUMMARY: ${{ steps.parse.outputs.summary }}
+        PLAN: ${{ steps.parse.outputs.plan }}
+        TRANSIENT: ${{ steps.parse.outputs.transient }}
       run: |
-        echo "Category: ${{ steps.parse.outputs.category }}"
-        echo "Summary: ${{ steps.parse.outputs.summary }}"
-        echo "Plan: ${{ steps.parse.outputs.plan }}"
-        echo "Transient: ${{ steps.parse.outputs.transient }}"
+        printf 'Category: %s\n' "$CATEGORY"
+        printf 'Summary: %s\n' "$SUMMARY"
+        printf 'Plan: %s\n' "$PLAN"
+        printf 'Transient: %s\n' "$TRANSIENT"
      
     - name: Check for existing remediation issue
       if: ${{ steps.parse.outputs.transient == 'false' }}
@@ -275,12 +280,17 @@ jobs:
         GH_TOKEN: ${{ secrets.AUTO_REMEDIATION_PAT }}
 
     - name: Summary
+      env:
+        TRANSIENT: ${{ steps.parse.outputs.transient }}
+        CATEGORY: ${{ steps.parse.outputs.category }}
+        SUMMARY: ${{ steps.parse.outputs.summary }}
+        ISSUE_NUMBER: ${{ steps.create-issue.outputs.issue_number }}
       run: |
-        if [[ "${{ steps.parse.outputs.transient }}" == "true" ]]; then
+        if [[ "$TRANSIENT" == "true" ]]; then
           echo "✅ Transient failure detected - skipped issue creation"
         else
           echo "🔧 Non-transient failure - remediation issue created"
-          echo "Category: ${{ steps.parse.outputs.category }}"
-          echo "Summary: ${{ steps.parse.outputs.summary }}"
-          echo "ID: ${{ steps.create-issue.outputs.issue_number }}"
+          printf 'Category: %s\n' "$CATEGORY"
+          printf 'Summary: %s\n' "$SUMMARY"
+          printf 'ID: %s\n' "$ISSUE_NUMBER"
         fi
