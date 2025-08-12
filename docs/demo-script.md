@@ -304,6 +304,17 @@ You can also use the Command Palette to start the MCP servers.
    - Codifying repetitive parts of existing workflows
    - Improving the discoverability of available Copilot use cases
 
+### **Demo: Using Copilot to help you Copilot (inception)**
+
+- **What to show:** Using a Chat Mode to help you refine your prompt, including a clarity score
+- **Why**: Helping users clarify their prompts is key to getting good results: but most developers don't know how to improve their prompts. This custom Chat Mode helps to improve prompts.
+- **How:**
+  1. Select "RefinePrompt" in the Chat mode
+  2. Enter a vague prompt: `I want a Cart page`. The output should ask some clarifying questions and have a low clarity score.
+  3. Attach the [cart image](docs/design/cart.png) to the Chat.
+  4. Enter a more detailed prompt: `I want a cart Page that shows the items in the cart currently using the attached image for design elements. Match dark/light modes. Show a shipping fee of $25 but free for orders over $150. Add a cart icon to the NavBar that shows the number of items in the cart and updates when items are added/removed. When the icon is clicked, navigate to the Cart page.`
+  5. You should get an even better prompt back with a high clarity score.
+
 ### **Demo: Using Coding Agent to Experiment in Parallel**  
 
 - **What to show:** Creating 3 variations of the Cart page in parallel.
