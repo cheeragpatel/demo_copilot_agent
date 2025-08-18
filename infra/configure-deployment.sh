@@ -129,7 +129,7 @@ fi
 
 # Create Azure Container Registry in production resource group
 # Remove hyphens and convert to lowercase for ACR name
-ACR_NAME=$(echo "${REPO_NAME}" | tr -d '-' | tr '[:upper:]' '[:lower:]')
+ACR_NAME=$(echo "${REPO_NAME}" | tr -d '-' | tr -d '_' | tr '[:upper:]' '[:lower:]')
 echo "🔍 Checking if Azure Container Registry '$ACR_NAME' exists..."
 ACR_EXISTS=$(az acr check-name --name $ACR_NAME --query 'nameAvailable' -o tsv)
 
