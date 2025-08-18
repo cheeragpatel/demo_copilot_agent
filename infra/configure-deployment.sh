@@ -76,14 +76,30 @@ else
 fi
 
 echo "🔍 Getting subscription information..."
-SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-SUBSCRIPTION_NAME=$(az account show --query name -o tsv)
-TENANT_ID=$(az account show --query tenantId -o tsv)
+SUBSCRIPTION_ID=$(az account show --query id -o tsv 2>/dev/null)
+SUBSCRIPTION_NAME=$(az account show --query name -o tsv 2>/dev/null)
+TENANT_ID=$(az account show --query tenantId -o tsv 2>/dev/null)
+
+# Validate that we have subscription information
+if [ -z "$SUBSCRIPTION_ID" ] || [ -z "$TENANT_ID" ]; then
+    echo "❌ Error: Could not retrieve subscription information. Please ensure you're logged in to Azure."
+    echo "   Try running: az login"
+    exit 1
+fi
 
 echo "📊 Using the following Azure subscription:"
 echo "   Subscription ID: $SUBSCRIPTION_ID"
 echo "   Subscription Name: $SUBSCRIPTION_NAME"
 echo "   Tenant ID: $TENANT_ID"
+
+# Verify subscription access
+echo "🔍 Verifying subscription access..."
+if ! az account show --subscription "$SUBSCRIPTION_ID" &>/dev/null; then
+    echo "❌ Error: Cannot access subscription $SUBSCRIPTION_ID"
+    echo "   Please check your Azure permissions and try again."
+    exit 1
+fi
+echo "✅ Subscription access verified"
 
 # Create or check resource groups
 create_resource_group() {
@@ -115,21 +131,80 @@ SP_CHECK=$(az ad sp list --filter "displayName eq '$SP_NAME'" --query "[].appId"
 
 if [ -z "$SP_CHECK" ]; then
     echo "🔑 Creating new service principal '$SP_NAME'..."
-    SP_INFO=$(az ad sp create-for-rbac --name "$SP_NAME" \
-        --role contributor \
-        --scopes /subscriptions/$SUBSCRIPTION_ID \
-        --query "{clientId:appId}" -o json)
     
-    CLIENT_ID=$(echo $SP_INFO | jq -r .clientId)
-    echo "✅ Service principal created with ID: $CLIENT_ID"
+    # Create the Azure AD application first (or get existing)
+    APP_CHECK=$(az ad app list --filter "displayName eq '$SP_NAME'" --query "[0].appId" -o tsv)
+    
+    if [ -z "$APP_CHECK" ]; then
+        # Create new app if it doesn't exist
+        CLIENT_ID=$(az ad app create --display-name "$SP_NAME" --query appId -o tsv)
+        echo "✅ Created new Azure AD application with ID: $CLIENT_ID"
+    else
+        # Use existing app
+        CLIENT_ID=$APP_CHECK
+        echo "ℹ️ Using existing Azure AD application with ID: $CLIENT_ID"
+    fi
+    
+    # Check if service principal exists for this app
+    SP_EXISTS=$(az ad sp list --filter "appId eq '$CLIENT_ID'" --query "[0].appId" -o tsv)
+    
+    if [ -z "$SP_EXISTS" ]; then
+        # Create the service principal without credentials
+        az ad sp create --id "$CLIENT_ID" > /dev/null
+        echo "✅ Created service principal for app ID: $CLIENT_ID"
+    else
+        echo "ℹ️ Service principal already exists for app ID: $CLIENT_ID"
+    fi
+    
+    # Assign the contributor role at subscription level
+    ROLE_EXISTS=$(az role assignment list --assignee "$CLIENT_ID" --role contributor --scope /subscriptions/$SUBSCRIPTION_ID --query "[0].id" -o tsv)
+    if [ -z "$ROLE_EXISTS" ]; then
+        az role assignment create \
+            --assignee "$CLIENT_ID" \
+            --role contributor \
+            --scope /subscriptions/$SUBSCRIPTION_ID > /dev/null
+        echo "✅ Assigned Contributor role at subscription level"
+    else
+        echo "ℹ️ Contributor role already assigned at subscription level"
+    fi
+    
+    echo "✅ Service principal setup complete with ID: $CLIENT_ID (no client secret - using OIDC only)"
 else
     echo "ℹ️ Service principal '$SP_NAME' already exists with ID: $SP_CHECK"
     CLIENT_ID=$SP_CHECK
 fi
 
+# Register Microsoft.ContainerRegistry provider if not already registered
+echo "🔍 Checking if Microsoft.ContainerRegistry provider is registered..."
+PROVIDER_STATUS=$(az provider show --namespace Microsoft.ContainerRegistry --query registrationState -o tsv 2>/dev/null)
+
+if [ "$PROVIDER_STATUS" != "Registered" ]; then
+    echo "🔧 Registering Microsoft.ContainerRegistry provider..."
+    az provider register --namespace Microsoft.ContainerRegistry > /dev/null
+    echo "⏳ Waiting for provider registration to complete..."
+    while [ "$(az provider show --namespace Microsoft.ContainerRegistry --query registrationState -o tsv)" != "Registered" ]; do
+        echo "   Still waiting for provider registration..."
+        sleep 10
+    done
+    echo "✅ Microsoft.ContainerRegistry provider registered successfully"
+else
+    echo "✅ Microsoft.ContainerRegistry provider already registered"
+fi
+
 # Create Azure Container Registry in production resource group
-# Remove hyphens and convert to lowercase for ACR name
+# Remove hyphens and convert to lowercase for ACR name, ensure it's at least 5 characters
 ACR_NAME=$(echo "${REPO_NAME}" | tr -d '-' | tr -d '_' | tr '[:upper:]' '[:lower:]')
+# Ensure ACR name is at least 5 characters and only contains alphanumeric characters
+if [ ${#ACR_NAME} -lt 5 ]; then
+    ACR_NAME="${ACR_NAME}acr"
+fi
+# Remove any non-alphanumeric characters
+ACR_NAME=$(echo "$ACR_NAME" | sed 's/[^a-zA-Z0-9]//g')
+# if longer than 35 chars, trim
+if [ ${#ACR_NAME} -gt 35 ]; then
+    ACR_NAME=$(echo "$ACR_NAME" | cut -c1-35)
+fi
+
 echo "🔍 Checking if Azure Container Registry '$ACR_NAME' exists..."
 ACR_EXISTS=$(az acr check-name --name $ACR_NAME --query 'nameAvailable' -o tsv)
 
@@ -153,40 +228,69 @@ echo "✅ Admin access enabled for Azure Container Registry '$ACR_NAME'"
 
 # Grant ACR access to the service principal
 echo "🔑 Granting AcrPull role to service principal for ACR..."
-az role assignment create \
-    --assignee-object-id $(az ad sp show --id $CLIENT_ID --query id -o tsv) \
+SP_OBJECT_ID=$(az ad sp show --id $CLIENT_ID --query id -o tsv)
+if [ -z "$SP_OBJECT_ID" ]; then
+    echo "❌ Error: Could not retrieve service principal object ID"
+    exit 1
+fi
+
+ACR_SCOPE="/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RG_PROD/providers/Microsoft.ContainerRegistry/registries/$ACR_NAME"
+if az role assignment create \
+    --assignee-object-id $SP_OBJECT_ID \
     --assignee-principal-type ServicePrincipal \
     --role AcrPull \
-    --scope /subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RG_PROD/providers/Microsoft.ContainerRegistry/registries/$ACR_NAME > /dev/null
+    --scope "$ACR_SCOPE" > /dev/null 2>&1; then
+    echo "✅ AcrPull role assigned successfully"
+else
+    echo "⚠️ Warning: Failed to assign AcrPull role (may already exist)"
+fi
 
 # Assign role to specific resource groups
 echo "🔑 Assigning Contributor role to service principal for resource group '$RG_STAGING'..."
-az role assignment create \
-    --assignee-object-id $(az ad sp show --id $CLIENT_ID --query id -o tsv) \
+RG_STAGING_SCOPE="/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RG_STAGING"
+if az role assignment create \
+    --assignee-object-id $SP_OBJECT_ID \
     --assignee-principal-type ServicePrincipal \
     --role Contributor \
-    --scope /subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RG_STAGING > /dev/null
+    --scope "$RG_STAGING_SCOPE" > /dev/null 2>&1; then
+    echo "✅ Contributor role assigned to staging resource group successfully"
+else
+    echo "⚠️ Warning: Failed to assign Contributor role to staging resource group (may already exist)"
+fi
 
 echo "🔑 Assigning Contributor role to service principal for resource group '$RG_PROD'..."
-az role assignment create \
-    --assignee-object-id $(az ad sp show --id $CLIENT_ID --query id -o tsv) \
+RG_PROD_SCOPE="/subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RG_PROD"
+if az role assignment create \
+    --assignee-object-id $SP_OBJECT_ID \
     --assignee-principal-type ServicePrincipal \
     --role Contributor \
-    --scope /subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RG_PROD > /dev/null
+    --scope "$RG_PROD_SCOPE" > /dev/null 2>&1; then
+    echo "✅ Contributor role assigned to production resource group successfully"
+else
+    echo "⚠️ Warning: Failed to assign Contributor role to production resource group (may already exist)"
+fi
 
 # Assign User Access Administrator role to allow role assignments
 echo "🔑 Assigning User Access Administrator role to service principal for resource groups..."
-az role assignment create \
-    --assignee-object-id $(az ad sp show --id $CLIENT_ID --query id -o tsv) \
+if az role assignment create \
+    --assignee-object-id $SP_OBJECT_ID \
     --assignee-principal-type ServicePrincipal \
     --role "User Access Administrator" \
-    --scope /subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RG_STAGING > /dev/null
+    --scope "$RG_STAGING_SCOPE" > /dev/null 2>&1; then
+    echo "✅ User Access Administrator role assigned to staging resource group successfully"
+else
+    echo "⚠️ Warning: Failed to assign User Access Administrator role to staging resource group (may already exist)"
+fi
 
-az role assignment create \
-    --assignee-object-id $(az ad sp show --id $CLIENT_ID --query id -o tsv) \
+if az role assignment create \
+    --assignee-object-id $SP_OBJECT_ID \
     --assignee-principal-type ServicePrincipal \
     --role "User Access Administrator" \
-    --scope /subscriptions/$SUBSCRIPTION_ID/resourceGroups/$RG_PROD > /dev/null
+    --scope "$RG_PROD_SCOPE" > /dev/null 2>&1; then
+    echo "✅ User Access Administrator role assigned to production resource group successfully"
+else
+    echo "⚠️ Warning: Failed to assign User Access Administrator role to production resource group (may already exist)"
+fi
 
 # Function to create federated credential if it doesn't exist
 create_federated_credential() {
