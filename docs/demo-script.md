@@ -334,7 +334,7 @@ You can also use the Command Palette to start the MCP servers.
      2. Repo level: `Actions` read-only, `Contents` read-only, `Issues` read/write
   2. In the repo, navigate to Settings and add a new Actions repository secret called `AUTO_REMEDIATION_PAT` with your PAT
   3. Create a failure in the code
-     1. Edit the [branch.ts route file](api/src/routes/branch.ts)
+     1. Edit the [branch.ts route file](../api/src/routes/branch.ts)
      2. Find the put method and insert a breaking change:
         ```javascript
         if (index !== -1) {
