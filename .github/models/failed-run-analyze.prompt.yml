@@ -42,7 +42,7 @@ messages:
       whether this is a  transient failure that can be resolved by re-running
       the workflow, or if it requires code  changes. If code changes are needed,
       provide a detailed remediation plan. Keep the summary short and DO NOT include
-      the entire build log.
+      the entire build log. Only ever fetch at max. the last 100 lines from the log.
 testData:
   - name: dependency_missing
     failure_logs: |
