@@ -33,7 +33,7 @@ messages:
       ## CI/CD Pipeline Failure Logs
 
       Use the GitHub MCP `get_job_logs` tool to retrieve failed job logs from
-      the specified workflow run.
+      the specified workflow run. Only fetch 100 lines of logs!
         - Repo: {{repo}}
         - Owner: {{owner}}
         - Workflow Run ID: {{workflow_run_id}}
