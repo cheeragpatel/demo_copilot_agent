@@ -101,11 +101,10 @@
 
 import express from 'express';
 import { Product } from '../models/product';
-import { products as seedProducts } from '../seedData';
+import { getProductsRepository } from '../repositories/productsRepo';
+import { handleDatabaseError, NotFoundError } from '../utils/errors';
 
 const router = express.Router();
-
-let products: Product[] = [...seedProducts];
 
 // Create a new product
 router.post('/', (req, res) => {
