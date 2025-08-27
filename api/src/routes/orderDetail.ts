@@ -101,54 +101,76 @@
 
 import express from 'express';
 import { OrderDetail } from '../models/orderDetail';
-import { orderDetails as seedOrderDetails } from '../seedData';
+import { getOrderDetailsRepository } from '../repositories/orderDetailsRepo';
+import { handleDatabaseError, NotFoundError } from '../utils/errors';
 
 const router = express.Router();
 
-let orderDetails: OrderDetail[] = [...seedOrderDetails];
-
 // Create a new order detail
-router.post('/', (req, res) => {
-  const newOrderDetail: OrderDetail = req.body;
-  orderDetails.push(newOrderDetail);
-  res.status(201).json(newOrderDetail);
+router.post('/', async (req, res) => {
+    try {
+        const repo = await getOrderDetailsRepository();
+        const newOrderDetail = await repo.create(req.body as Omit<OrderDetail, 'orderDetailId'>);
+        res.status(201).json(newOrderDetail);
+    } catch (error) {
+        handleDatabaseError(error);
+    }
 });
 
 // Get all order details
-router.get('/', (req, res) => {
-  res.json(orderDetails);
+router.get('/', async (req, res) => {
+    try {
+        const repo = await getOrderDetailsRepository();
+        const orderDetails = await repo.findAll();
+        res.json(orderDetails);
+    } catch (error) {
+        handleDatabaseError(error);
+    }
 });
 
 // Get an order detail by ID
-router.get('/:id', (req, res) => {
-  const orderDetail = orderDetails.find(od => od.orderDetailId === parseInt(req.params.id));
-  if (orderDetail) {
-    res.json(orderDetail);
-  } else {
-    res.status(404).send('Order detail not found');
-  }
+router.get('/:id', async (req, res) => {
+    try {
+        const repo = await getOrderDetailsRepository();
+        const orderDetail = await repo.findById(parseInt(req.params.id));
+        if (orderDetail) {
+            res.json(orderDetail);
+        } else {
+            res.status(404).send('Order detail not found');
+        }
+    } catch (error) {
+        handleDatabaseError(error);
+    }
 });
 
 // Update an order detail by ID
-router.put('/:id', (req, res) => {
-  const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(req.params.id));
-  if (index !== -1) {
-    orderDetails[index] = req.body;
-    res.json(orderDetails[index]);
-  } else {
-    res.status(404).send('Order detail not found');
-  }
+router.put('/:id', async (req, res) => {
+    try {
+        const repo = await getOrderDetailsRepository();
+        const updatedOrderDetail = await repo.update(parseInt(req.params.id), req.body);
+        res.json(updatedOrderDetail);
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            res.status(404).send('Order detail not found');
+        } else {
+            handleDatabaseError(error);
+        }
+    }
 });
 
 // Delete an order detail by ID
-router.delete('/:id', (req, res) => {
-  const index = orderDetails.findIndex(od => od.orderDetailId === parseInt(req.params.id));
-  if (index !== -1) {
-    orderDetails.splice(index, 1);
-    res.status(204).send();
-  } else {
-    res.status(404).send('Order detail not found');
-  }
+router.delete('/:id', async (req, res) => {
+    try {
+        const repo = await getOrderDetailsRepository();
+        await repo.delete(parseInt(req.params.id));
+        res.status(204).send();
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            res.status(404).send('Order detail not found');
+        } else {
+            handleDatabaseError(error);
+        }
+    }
 });
 
 export default router;

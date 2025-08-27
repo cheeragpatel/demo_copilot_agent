@@ -101,59 +101,76 @@
 
 import express from 'express';
 import { Branch } from '../models/branch';
-import { branches as seedBranches } from '../seedData';
+import { getBranchesRepository } from '../repositories/branchesRepo';
+import { handleDatabaseError, NotFoundError } from '../utils/errors';
 
 const router = express.Router();
 
-let branches: Branch[] = [...seedBranches];
-
-// Add reset function for testing
-export const resetBranches = () => {
-  branches = [...seedBranches];
-};
-
 // Create a new branch
-router.post('/', (req, res) => {
-  const newBranch: Branch = req.body;
-  branches.push(newBranch);
-  res.status(201).json(newBranch);
+router.post('/', async (req, res) => {
+    try {
+        const repo = await getBranchesRepository();
+        const newBranch = await repo.create(req.body as Omit<Branch, 'branchId'>);
+        res.status(201).json(newBranch);
+    } catch (error) {
+        handleDatabaseError(error);
+    }
 });
 
 // Get all branches
-router.get('/', (req, res) => {
-  res.json(branches);
+router.get('/', async (req, res) => {
+    try {
+        const repo = await getBranchesRepository();
+        const branches = await repo.findAll();
+        res.json(branches);
+    } catch (error) {
+        handleDatabaseError(error);
+    }
 });
 
 // Get a branch by ID
-router.get('/:id', (req, res) => {
-  const branch = branches.find(b => b.branchId === parseInt(req.params.id));
-  if (branch) {
-    res.json(branch);
-  } else {
-    res.status(404).send('Branch not found');
-  }
+router.get('/:id', async (req, res) => {
+    try {
+        const repo = await getBranchesRepository();
+        const branch = await repo.findById(parseInt(req.params.id));
+        if (branch) {
+            res.json(branch);
+        } else {
+            res.status(404).send('Branch not found');
+        }
+    } catch (error) {
+        handleDatabaseError(error);
+    }
 });
 
 // Update a branch by ID
-router.put('/:id', (req, res) => {
-  const index = branches.findIndex(b => b.branchId === parseInt(req.params.id));
-  if (index !== -1) {
-    branches[index] = req.body;
-    res.json(branches[index]);
-  } else {
-    res.status(404).send('Branch not found');
-  }
+router.put('/:id', async (req, res) => {
+    try {
+        const repo = await getBranchesRepository();
+        const updatedBranch = await repo.update(parseInt(req.params.id), req.body);
+        res.json(updatedBranch);
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            res.status(404).send('Branch not found');
+        } else {
+            handleDatabaseError(error);
+        }
+    }
 });
 
 // Delete a branch by ID
-router.delete('/:id', (req, res) => {
-  const index = branches.findIndex(b => b.branchId === parseInt(req.params.id));
-  if (index !== -1) {
-    branches.splice(index, 1);
-    res.status(204).send();
-  } else {
-    res.status(404).send('Branch not found');
-  }
+router.delete('/:id', async (req, res) => {
+    try {
+        const repo = await getBranchesRepository();
+        await repo.delete(parseInt(req.params.id));
+        res.status(204).send();
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            res.status(404).send('Branch not found');
+        } else {
+            handleDatabaseError(error);
+        }
+    }
 });
 
 export default router;
