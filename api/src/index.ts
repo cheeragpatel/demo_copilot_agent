@@ -10,6 +10,8 @@ import orderRoutes from './routes/order';
 import branchRoutes from './routes/branch';
 import headquartersRoutes from './routes/headquarters';
 import supplierRoutes from './routes/supplier';
+import { initializeDatabase } from './init-db';
+import { errorHandler } from './utils/errors';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -79,7 +81,24 @@ app.get('/', (req, res) => {
   res.send('Hello, world!');
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-  console.log(`API documentation is available at http://localhost:${port}/api-docs`);
-});
+// Add error handling middleware
+app.use(errorHandler);
+
+// Initialize database and start server
+async function startServer() {
+  try {
+    console.log('🚀 Initializing database...');
+    await initializeDatabase(false); // Don't seed if already initialized
+    console.log('✅ Database initialized successfully');
+    
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+      console.log(`API documentation is available at http://localhost:${port}/api-docs`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
