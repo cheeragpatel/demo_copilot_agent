@@ -36,7 +36,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
- * 
+ *
  * /api/products/{id}:
  *   get:
  *     summary: Get a product by ID
@@ -101,53 +101,75 @@
 
 import express from 'express';
 import { Product } from '../models/product';
-import { products as seedProducts } from '../seedData';
+import { getProductsRepository } from '../repositories/productsRepo';
+import { handleDatabaseError, NotFoundError } from '../utils/errors';
 
 const router = express.Router();
 
-let products: Product[] = [...seedProducts];
-
 // Create a new product
-router.post('/', (req, res) => {
-  const newProduct: Product = req.body;
-  products.push(newProduct);
-  res.status(201).json(newProduct);
+router.post('/', async (req, res, next) => {
+  try {
+    const repo = await getProductsRepository();
+    const newProduct = await repo.create(req.body as Omit<Product, 'productId'>);
+    res.status(201).json(newProduct);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Get all products
-router.get('/', (req, res) => {
-  res.json(products);
+router.get('/', async (req, res, next) => {
+  try {
+    const repo = await getProductsRepository();
+    const products = await repo.findAll();
+    res.json(products);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Get a product by ID
-router.get('/:id', (req, res) => {
-  const product = products.find(p => p.productId === parseInt(req.params.id));
-  if (product) {
-    res.json(product);
-  } else {
-    res.status(404).send('Product not found');
+router.get('/:id', async (req, res, next) => {
+  try {
+    const repo = await getProductsRepository();
+    const product = await repo.findById(parseInt(req.params.id));
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).send('Product not found');
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
 // Update a product by ID
-router.put('/:id', (req, res) => {
-  const index = products.findIndex(p => p.productId === parseInt(req.params.id));
-  if (index !== -1) {
-    products[index] = req.body;
-    res.json(products[index]);
-  } else {
-    res.status(404).send('Product not found');
+router.put('/:id', async (req, res, next) => {
+  try {
+    const repo = await getProductsRepository();
+    const updatedProduct = await repo.update(parseInt(req.params.id), req.body);
+    res.json(updatedProduct);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).send('Product not found');
+    } else {
+      next(error);
+    }
   }
 });
 
 // Delete a product by ID
-router.delete('/:id', (req, res) => {
-  const index = products.findIndex(p => p.productId === parseInt(req.params.id));
-  if (index !== -1) {
-    products.splice(index, 1);
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const repo = await getProductsRepository();
+    await repo.delete(parseInt(req.params.id));
     res.status(204).send();
-  } else {
-    res.status(404).send('Product not found');
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).send('Product not found');
+    } else {
+      next(error);
+    }
   }
 });
 

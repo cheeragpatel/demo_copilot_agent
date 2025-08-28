@@ -36,7 +36,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Headquarters'
- * 
+ *
  * /api/headquarters/{id}:
  *   get:
  *     summary: Get a headquarters by ID
@@ -101,53 +101,75 @@
 
 import express from 'express';
 import { Headquarters } from '../models/headquarters';
-import { headquarters as seedHeadquarters } from '../seedData';
+import { getHeadquartersRepository } from '../repositories/headquartersRepo';
+import { NotFoundError } from '../utils/errors';
 
 const router = express.Router();
 
-let headquartersList: Headquarters[] = [...seedHeadquarters];
-
 // Create a new headquarters
-router.post('/', (req, res) => {
-  const newHeadquarters: Headquarters = req.body;
-  headquartersList.push(newHeadquarters);
-  res.status(201).json(newHeadquarters);
+router.post('/', async (req, res, next) => {
+  try {
+    const repo = await getHeadquartersRepository();
+    const newHeadquarters = await repo.create(req.body as Omit<Headquarters, 'headquartersId'>);
+    res.status(201).json(newHeadquarters);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Get all headquarters
-router.get('/', (req, res) => {
-  res.json(headquartersList);
+router.get('/', async (req, res, next) => {
+  try {
+    const repo = await getHeadquartersRepository();
+    const headquarters = await repo.findAll();
+    res.json(headquarters);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Get a headquarters by ID
-router.get('/:id', (req, res) => {
-  const headquarters = headquartersList.find(h => h.headquartersId === parseInt(req.params.id));
-  if (headquarters) {
-    res.json(headquarters);
-  } else {
-    res.status(404).send('Headquarters not found');
+router.get('/:id', async (req, res, next) => {
+  try {
+    const repo = await getHeadquartersRepository();
+    const headquarters = await repo.findById(parseInt(req.params.id));
+    if (headquarters) {
+      res.json(headquarters);
+    } else {
+      res.status(404).send('Headquarters not found');
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
 // Update a headquarters by ID
-router.put('/:id', (req, res) => {
-  const index = headquartersList.findIndex(h => h.headquartersId === parseInt(req.params.id));
-  if (index !== -1) {
-    headquartersList[index] = req.body;
-    res.json(headquartersList[index]);
-  } else {
-    res.status(404).send('Headquarters not found');
+router.put('/:id', async (req, res, next) => {
+  try {
+    const repo = await getHeadquartersRepository();
+    const updatedHeadquarters = await repo.update(parseInt(req.params.id), req.body);
+    res.json(updatedHeadquarters);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).send('Headquarters not found');
+    } else {
+      next(error);
+    }
   }
 });
 
 // Delete a headquarters by ID
-router.delete('/:id', (req, res) => {
-  const index = headquartersList.findIndex(h => h.headquartersId === parseInt(req.params.id));
-  if (index !== -1) {
-    headquartersList.splice(index, 1);
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const repo = await getHeadquartersRepository();
+    await repo.delete(parseInt(req.params.id));
     res.status(204).send();
-  } else {
-    res.status(404).send('Headquarters not found');
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).send('Headquarters not found');
+    } else {
+      next(error);
+    }
   }
 });
 

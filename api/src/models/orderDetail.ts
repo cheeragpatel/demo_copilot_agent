@@ -32,10 +32,10 @@
  *           description: Additional notes for the order detail
  */
 export interface OrderDetail {
-    orderDetailId: number;
-    orderId: number;
-    productId: number;
-    quantity: number;
-    unitPrice: number;
-    notes: string;
+  orderDetailId: number;
+  orderId: number;
+  productId: number;
+  quantity: number;
+  unitPrice: number;
+  notes: string;
 }

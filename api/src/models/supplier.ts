@@ -32,10 +32,10 @@
  *           description: Additional details about the supplier
  */
 export interface Supplier {
-    supplierId: number;
-    name: string;
-    description: string;
-    contactPerson: string;
-    email: string;
-    phone: string;
+  supplierId: number;
+  name: string;
+  description: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
 }

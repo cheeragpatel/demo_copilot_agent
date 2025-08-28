@@ -9,6 +9,7 @@ This repo is hosted in GitHub:
 ## Architecture
 
 The complete architecture is described in the [Architecture Document](../docs/architecture.md).
+SQLite database integration details are in [SQLite Integration](../docs/sqlite-integration.md).
 
 # Build and Run Instructions
 
@@ -24,4 +25,17 @@ To run the unit tests for the API, run:
 
 ```bash
 npm run test:api
+```
+
+## Database management (API workspace)
+
+```bash
+# Initialize DB (migrations + seed)
+npm run db:init --workspace=api
+
+# Run migrations only
+npm run db:migrate --workspace=api
+
+# Seed data only
+npm run db:seed --workspace=api
 ```

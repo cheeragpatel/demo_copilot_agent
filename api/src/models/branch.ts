@@ -30,12 +30,12 @@
  *           description: Contact email for the branch
  */
 export interface Branch {
-    branchId: number;
-    headquartersId: number;
-    name: string;
-    description: string;
-    address: string;
-    contactPerson: string;
-    email: string;
-    phone: string;
+  branchId: number;
+  headquartersId: number;
+  name: string;
+  description: string;
+  address: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
 }

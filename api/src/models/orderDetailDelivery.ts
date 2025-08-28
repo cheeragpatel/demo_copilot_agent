@@ -26,9 +26,9 @@
  *           description: Additional notes about this delivery
  */
 export interface OrderDetailDelivery {
-    orderDetailDeliveryId: number;
-    orderDetailId: number;
-    deliveryId: number;
-    quantity: number;
-    notes: string;
+  orderDetailDeliveryId: number;
+  orderDetailId: number;
+  deliveryId: number;
+  quantity: number;
+  notes: string;
 }

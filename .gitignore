@@ -46,3 +46,9 @@ jspm_packages/
 
 dist/
 coverage/
+
+# Database files
+api/data/
+*.db
+*.db-wal
+*.db-shm
