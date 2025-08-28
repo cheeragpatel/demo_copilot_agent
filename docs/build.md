@@ -42,6 +42,25 @@ npm run build --workspace=api
 npm run build --workspace=frontend
 ```
 
+### Database management (API workspace)
+
+```bash
+# Initialize DB (migrations + seed)
+npm run db:init --workspace=api
+
+# Run migrations only
+npm run db:migrate --workspace=api
+
+# Seed data only
+npm run db:seed --workspace=api
+```
+
+Environment variables:
+- DB_FILE: path to SQLite database file (default: `api/data/app.db`)
+- DB_ENABLE_WAL: enable WAL mode (default: true)
+- DB_FOREIGN_KEYS: enforce foreign keys (default: true)
+- DB_TIMEOUT: busy timeout in ms (default: 30000)
+
 ### Using VS Code Tasks
 
 VS Code tasks have been configured to streamline the build process:
@@ -105,6 +124,8 @@ npm run lint
 ### Port Configuration
 
 The API runs on port 3000 by default, and the Frontend runs on port 5137. When running in a Codespace environment, ensure that the API port visibility is set to `public` to avoid CORS errors when the Frontend tries to communicate with the API.
+
+For Docker, the sample compose maps API to 3000 and frontend to 3001.
 
 ### Docker Deployment
 
