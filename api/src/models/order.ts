@@ -29,10 +29,10 @@
  *           description: The total amount of the order
  */
 export interface Order {
-    orderId: number;
-    branchId: number;
-    orderDate: string;
-    name: string;
-    description: string;
-    status: string;
+  orderId: number;
+  branchId: number;
+  orderDate: string;
+  name: string;
+  description: string;
+  status: string;
 }

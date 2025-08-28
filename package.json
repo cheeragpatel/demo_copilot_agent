@@ -16,10 +16,21 @@
     "test": "npm run test --workspaces",
     "test:api": "npm run test --workspace=api",
     "test:frontend": "npm run test --workspace=frontend",
-    "lint": "npm run lint --workspace=frontend"
+    "lint": "npm run lint --workspace=frontend",
+    "prettify": "prettier --cache --write \"**/*.{ts,tsx}\""
   },
   "devDependencies": {
-    "concurrently": "^6.2.1"
+    "concurrently": "^6.2.1",
+    "prettier": "^3.3.3"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": true,
+    "trailingComma": "all",
+    "printWidth": 100,
+    "tabWidth": 2,
+    "arrowParens": "always",
+    "endOfLine": "lf"
   },
   "license": "MIT",
   "engines": {

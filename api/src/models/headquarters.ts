@@ -29,11 +29,11 @@
  *           description: Additional details about the headquarters
  */
 export interface Headquarters {
-    headquartersId: number;
-    name: string;
-    description: string;
-    address: string;
-    contactPerson: string;
-    email: string;
-    phone: string;
+  headquartersId: number;
+  name: string;
+  description: string;
+  address: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
 }

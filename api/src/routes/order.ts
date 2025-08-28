@@ -36,7 +36,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Order'
- * 
+ *
  * /api/orders/{id}:
  *   get:
  *     summary: Get an order by ID
@@ -101,53 +101,75 @@
 
 import express from 'express';
 import { Order } from '../models/order';
-import { orders as seedOrders } from '../seedData';
+import { getOrdersRepository } from '../repositories/ordersRepo';
+import { handleDatabaseError, NotFoundError } from '../utils/errors';
 
 const router = express.Router();
 
-let orders: Order[] = [...seedOrders];
-
 // Create a new order
-router.post('/', (req, res) => {
-  const newOrder: Order = req.body;
-  orders.push(newOrder);
-  res.status(201).json(newOrder);
+router.post('/', async (req, res, next) => {
+  try {
+    const repo = await getOrdersRepository();
+    const newOrder = await repo.create(req.body as Omit<Order, 'orderId'>);
+    res.status(201).json(newOrder);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Get all orders
-router.get('/', (req, res) => {
-  res.json(orders);
+router.get('/', async (req, res, next) => {
+  try {
+    const repo = await getOrdersRepository();
+    const orders = await repo.findAll();
+    res.json(orders);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Get an order by ID
-router.get('/:id', (req, res) => {
-  const order = orders.find(o => o.orderId === parseInt(req.params.id));
-  if (order) {
-    res.json(order);
-  } else {
-    res.status(404).send('Order not found');
+router.get('/:id', async (req, res, next) => {
+  try {
+    const repo = await getOrdersRepository();
+    const order = await repo.findById(parseInt(req.params.id));
+    if (order) {
+      res.json(order);
+    } else {
+      res.status(404).send('Order not found');
+    }
+  } catch (error) {
+    next(error);
   }
 });
 
 // Update an order by ID
-router.put('/:id', (req, res) => {
-  const index = orders.findIndex(o => o.orderId === parseInt(req.params.id));
-  if (index !== -1) {
-    orders[index] = req.body;
-    res.json(orders[index]);
-  } else {
-    res.status(404).send('Order not found');
+router.put('/:id', async (req, res, next) => {
+  try {
+    const repo = await getOrdersRepository();
+    const updatedOrder = await repo.update(parseInt(req.params.id), req.body);
+    res.json(updatedOrder);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).send('Order not found');
+    } else {
+      next(error);
+    }
   }
 });
 
 // Delete an order by ID
-router.delete('/:id', (req, res) => {
-  const index = orders.findIndex(o => o.orderId === parseInt(req.params.id));
-  if (index !== -1) {
-    orders.splice(index, 1);
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const repo = await getOrdersRepository();
+    await repo.delete(parseInt(req.params.id));
     res.status(204).send();
-  } else {
-    res.status(404).send('Order not found');
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).send('Order not found');
+    } else {
+      next(error);
+    }
   }
 });
 
