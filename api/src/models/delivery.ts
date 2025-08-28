@@ -32,10 +32,10 @@
  *           description: Additional notes about the delivery
  */
 export interface Delivery {
-    deliveryId: number;
-    supplierId: number;
-    deliveryDate: string;
-    name: string;
-    description: string;
-    status: string;
+  deliveryId: number;
+  supplierId: number;
+  deliveryDate: string;
+  name: string;
+  description: string;
+  status: string;
 }

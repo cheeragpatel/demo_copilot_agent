@@ -17,24 +17,26 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Parse CORS origins from environment variable if available
-const corsOrigins = process.env.API_CORS_ORIGINS 
+const corsOrigins = process.env.API_CORS_ORIGINS
   ? process.env.API_CORS_ORIGINS.split(',')
   : [
-      'http://localhost:5137', 
+      'http://localhost:5137',
       'http://localhost:3001',
       // Allow all Codespace domains
-      /^https:\/\/.*\.app\.github\.dev$/
+      /^https:\/\/.*\.app\.github\.dev$/,
     ];
 
 console.log('Configured CORS origins:', corsOrigins);
 
 // Enable CORS for the frontend
-app.use(cors({
-  origin: corsOrigins,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true // Allow credentials
-}));
+app.use(
+  cors({
+    origin: corsOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // Allow credentials
+  }),
+);
 
 const swaggerOptions = {
   definition: {
@@ -52,7 +54,7 @@ const swaggerOptions = {
       {
         url: `https://localhost:${port}`,
         description: 'Development server (HTTPS)',
-      }
+      },
     ],
   },
   apis: ['./src/models/*.ts', './src/routes/*.ts'],
@@ -90,7 +92,7 @@ async function startServer() {
     console.log('🚀 Initializing database...');
     await initializeDatabase(false); // Don't seed if already initialized
     console.log('✅ Database initialized successfully');
-    
+
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
       console.log(`API documentation is available at http://localhost:${port}/api-docs`);

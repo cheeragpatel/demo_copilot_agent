@@ -34,13 +34,13 @@
  *           description: Discount percentage (if applicable) expressed as a decimal (e.g., 0.25 for 25%)
  */
 export interface Product {
-    productId: number;
-    supplierId: number;
-    name: string;
-    description: string;
-    price: number;
-    sku: string;
-    unit: string;
-    imgName: string;
-    discount?: number;
+  productId: number;
+  supplierId: number;
+  name: string;
+  description: string;
+  price: number;
+  sku: string;
+  unit: string;
+  imgName: string;
+  discount?: number;
 }

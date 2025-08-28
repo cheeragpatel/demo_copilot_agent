@@ -36,7 +36,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/OrderDetailDelivery'
- * 
+ *
  * /api/order-detail-deliveries/{id}:
  *   get:
  *     summary: Get an order detail delivery by ID
@@ -108,69 +108,71 @@ const router = express.Router();
 
 // Create a new order detail delivery
 router.post('/', async (req, res, next) => {
-    try {
-        const repo = await getOrderDetailDeliveriesRepository();
-        const newOrderDetailDelivery = await repo.create(req.body as Omit<OrderDetailDelivery, 'orderDetailDeliveryId'>);
-        res.status(201).json(newOrderDetailDelivery);
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const repo = await getOrderDetailDeliveriesRepository();
+    const newOrderDetailDelivery = await repo.create(
+      req.body as Omit<OrderDetailDelivery, 'orderDetailDeliveryId'>,
+    );
+    res.status(201).json(newOrderDetailDelivery);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Get all order detail deliveries
 router.get('/', async (req, res, next) => {
-    try {
-        const repo = await getOrderDetailDeliveriesRepository();
-        const orderDetailDeliveries = await repo.findAll();
-        res.json(orderDetailDeliveries);
-    } catch (error) {
-        next(error);
-    }
+  try {
+    const repo = await getOrderDetailDeliveriesRepository();
+    const orderDetailDeliveries = await repo.findAll();
+    res.json(orderDetailDeliveries);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Get an order detail delivery by ID
 router.get('/:id', async (req, res, next) => {
-    try {
-        const repo = await getOrderDetailDeliveriesRepository();
-        const orderDetailDelivery = await repo.findById(parseInt(req.params.id));
-        if (orderDetailDelivery) {
-            res.json(orderDetailDelivery);
-        } else {
-            res.status(404).send('Order detail delivery not found');
-        }
-    } catch (error) {
-        next(error);
+  try {
+    const repo = await getOrderDetailDeliveriesRepository();
+    const orderDetailDelivery = await repo.findById(parseInt(req.params.id));
+    if (orderDetailDelivery) {
+      res.json(orderDetailDelivery);
+    } else {
+      res.status(404).send('Order detail delivery not found');
     }
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Update an order detail delivery by ID
 router.put('/:id', async (req, res, next) => {
-    try {
-        const repo = await getOrderDetailDeliveriesRepository();
-        const updatedOrderDetailDelivery = await repo.update(parseInt(req.params.id), req.body);
-        res.json(updatedOrderDetailDelivery);
-    } catch (error) {
-        if (error instanceof NotFoundError) {
-            res.status(404).send('Order detail delivery not found');
-        } else {
-            next(error);
-        }
+  try {
+    const repo = await getOrderDetailDeliveriesRepository();
+    const updatedOrderDetailDelivery = await repo.update(parseInt(req.params.id), req.body);
+    res.json(updatedOrderDetailDelivery);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).send('Order detail delivery not found');
+    } else {
+      next(error);
     }
+  }
 });
 
 // Delete an order detail delivery by ID
 router.delete('/:id', async (req, res, next) => {
-    try {
-        const repo = await getOrderDetailDeliveriesRepository();
-        await repo.delete(parseInt(req.params.id));
-        res.status(204).send();
-    } catch (error) {
-        if (error instanceof NotFoundError) {
-            res.status(404).send('Order detail delivery not found');
-        } else {
-            next(error);
-        }
+  try {
+    const repo = await getOrderDetailDeliveriesRepository();
+    await repo.delete(parseInt(req.params.id));
+    res.status(204).send();
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).send('Order detail delivery not found');
+    } else {
+      next(error);
     }
+  }
 });
 
 export default router;
