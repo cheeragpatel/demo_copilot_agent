@@ -133,8 +133,12 @@ export async function createSuppliersRepository(isTest: boolean = false): Promis
 let suppliersRepo: SuppliersRepository | null = null;
 
 export async function getSuppliersRepository(isTest: boolean = false): Promise<SuppliersRepository> {
+    const isTestEnv = isTest || process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+    if (isTestEnv) {
+        return createSuppliersRepository(true);
+    }
     if (!suppliersRepo) {
-        suppliersRepo = await createSuppliersRepository(isTest);
+        suppliersRepo = await createSuppliersRepository(false);
     }
     return suppliersRepo;
 }

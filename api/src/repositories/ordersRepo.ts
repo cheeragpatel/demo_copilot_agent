@@ -163,8 +163,12 @@ export async function createOrdersRepository(isTest: boolean = false): Promise<O
 let ordersRepo: OrdersRepository | null = null;
 
 export async function getOrdersRepository(isTest: boolean = false): Promise<OrdersRepository> {
+    const isTestEnv = isTest || process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+    if (isTestEnv) {
+        return createOrdersRepository(true);
+    }
     if (!ordersRepo) {
-        ordersRepo = await createOrdersRepository(isTest);
+        ordersRepo = await createOrdersRepository(false);
     }
     return ordersRepo;
 }

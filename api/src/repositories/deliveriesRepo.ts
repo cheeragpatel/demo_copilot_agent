@@ -174,8 +174,12 @@ export async function createDeliveriesRepository(isTest: boolean = false): Promi
 let deliveriesRepo: DeliveriesRepository | null = null;
 
 export async function getDeliveriesRepository(isTest: boolean = false): Promise<DeliveriesRepository> {
+    const isTestEnv = isTest || process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+    if (isTestEnv) {
+        return createDeliveriesRepository(true);
+    }
     if (!deliveriesRepo) {
-        deliveriesRepo = await createDeliveriesRepository(isTest);
+        deliveriesRepo = await createDeliveriesRepository(false);
     }
     return deliveriesRepo;
 }

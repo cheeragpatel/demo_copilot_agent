@@ -107,29 +107,29 @@ import { handleDatabaseError, NotFoundError } from '../utils/errors';
 const router = express.Router();
 
 // Create a new branch
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const repo = await getBranchesRepository();
         const newBranch = await repo.create(req.body as Omit<Branch, 'branchId'>);
         res.status(201).json(newBranch);
     } catch (error) {
-        handleDatabaseError(error);
+    next(error);
     }
 });
 
 // Get all branches
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const repo = await getBranchesRepository();
         const branches = await repo.findAll();
         res.json(branches);
     } catch (error) {
-        handleDatabaseError(error);
+    next(error);
     }
 });
 
 // Get a branch by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const repo = await getBranchesRepository();
         const branch = await repo.findById(parseInt(req.params.id));
@@ -139,12 +139,12 @@ router.get('/:id', async (req, res) => {
             res.status(404).send('Branch not found');
         }
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Update a branch by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const repo = await getBranchesRepository();
         const updatedBranch = await repo.update(parseInt(req.params.id), req.body);
@@ -153,13 +153,13 @@ router.put('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Branch not found');
         } else {
-            handleDatabaseError(error);
+            next(error);
         }
     }
 });
 
 // Delete a branch by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const repo = await getBranchesRepository();
         await repo.delete(parseInt(req.params.id));
@@ -168,7 +168,7 @@ router.delete('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Branch not found');
         } else {
-            handleDatabaseError(error);
+            next(error);
         }
     }
 });

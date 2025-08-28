@@ -102,35 +102,35 @@
 import express from 'express';
 import { Delivery } from '../models/delivery';
 import { getDeliveriesRepository } from '../repositories/deliveriesRepo';
-import { handleDatabaseError, NotFoundError } from '../utils/errors';
+import { NotFoundError } from '../utils/errors';
 import { exec } from 'child_process';
 
 const router = express.Router();
 
 // Create a new delivery
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const repo = await getDeliveriesRepository();
         const newDelivery = await repo.create(req.body as Omit<Delivery, 'deliveryId'>);
         res.status(201).json(newDelivery);
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Get all deliveries
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const repo = await getDeliveriesRepository();
         const deliveries = await repo.findAll();
         res.json(deliveries);
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Get a delivery by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const repo = await getDeliveriesRepository();
         const delivery = await repo.findById(parseInt(req.params.id));
@@ -140,12 +140,12 @@ router.get('/:id', async (req, res) => {
             res.status(404).send('Delivery not found');
         }
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Update delivery status and trigger system notification
-router.put('/:id/status', async (req, res) => {
+router.put('/:id/status', async (req, res, next) => {
     try {
         const { status, notifyCommand } = req.body;
         const repo = await getDeliveriesRepository();
@@ -172,13 +172,13 @@ router.put('/:id/status', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Delivery not found');
         } else {
-            handleDatabaseError(error);
+            next(error);
         }
     }
 });
 
 // Update a delivery by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const repo = await getDeliveriesRepository();
         const updatedDelivery = await repo.update(parseInt(req.params.id), req.body);
@@ -187,13 +187,13 @@ router.put('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Delivery not found');
         } else {
-            handleDatabaseError(error);
+            next(error);
         }
     }
 });
 
 // Delete a delivery by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const repo = await getDeliveriesRepository();
         await repo.delete(parseInt(req.params.id));
@@ -202,7 +202,7 @@ router.delete('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Delivery not found');
         } else {
-            handleDatabaseError(error);
+            next(error);
         }
     }
 });

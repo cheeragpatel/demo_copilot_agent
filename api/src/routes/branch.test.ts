@@ -1,15 +1,34 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import branchRouter from './branch';
+import { runMigrations } from '../db/migrate';
+import { closeDatabase, getDatabase } from '../db/sqlite';
+import { errorHandler } from '../utils/errors';
 
 let app: express.Express;
 
 describe('Branch API', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
+        // Ensure a fresh in-memory database for each test
+        await closeDatabase();
+        await getDatabase(true);
+        await runMigrations(true);
+
+        // Seed required foreign key: headquarters id 1
+        const db = await getDatabase();
+        await db.run('INSERT INTO headquarters (headquarters_id, name) VALUES (?, ?)', [1, 'HQ One']);
+
+        // Set up express app
         app = express();
         app.use(express.json());
         app.use('/branches', branchRouter);
+        // Attach error handler to translate repo errors
+        app.use(errorHandler);
+    });
+
+    afterEach(async () => {
+        await closeDatabase();
     });
 
     it('should create a new branch', async () => {

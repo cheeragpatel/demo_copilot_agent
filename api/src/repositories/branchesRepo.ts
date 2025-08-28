@@ -148,8 +148,13 @@ export async function createBranchesRepository(isTest: boolean = false): Promise
 let branchesRepo: BranchesRepository | null = null;
 
 export async function getBranchesRepository(isTest: boolean = false): Promise<BranchesRepository> {
+    const isTestEnv = isTest || process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+    if (isTestEnv) {
+        // In tests, always return a fresh repository bound to the current in-memory DB
+        return createBranchesRepository(true);
+    }
     if (!branchesRepo) {
-        branchesRepo = await createBranchesRepository(isTest);
+        branchesRepo = await createBranchesRepository(false);
     }
     return branchesRepo;
 }

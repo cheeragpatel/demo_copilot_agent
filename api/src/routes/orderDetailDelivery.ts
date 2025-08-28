@@ -102,34 +102,34 @@
 import express from 'express';
 import { OrderDetailDelivery } from '../models/orderDetailDelivery';
 import { getOrderDetailDeliveriesRepository } from '../repositories/orderDetailDeliveriesRepo';
-import { handleDatabaseError, NotFoundError } from '../utils/errors';
+import { NotFoundError } from '../utils/errors';
 
 const router = express.Router();
 
 // Create a new order detail delivery
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const repo = await getOrderDetailDeliveriesRepository();
         const newOrderDetailDelivery = await repo.create(req.body as Omit<OrderDetailDelivery, 'orderDetailDeliveryId'>);
         res.status(201).json(newOrderDetailDelivery);
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Get all order detail deliveries
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const repo = await getOrderDetailDeliveriesRepository();
         const orderDetailDeliveries = await repo.findAll();
         res.json(orderDetailDeliveries);
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Get an order detail delivery by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const repo = await getOrderDetailDeliveriesRepository();
         const orderDetailDelivery = await repo.findById(parseInt(req.params.id));
@@ -139,12 +139,12 @@ router.get('/:id', async (req, res) => {
             res.status(404).send('Order detail delivery not found');
         }
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Update an order detail delivery by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const repo = await getOrderDetailDeliveriesRepository();
         const updatedOrderDetailDelivery = await repo.update(parseInt(req.params.id), req.body);
@@ -153,13 +153,13 @@ router.put('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Order detail delivery not found');
         } else {
-            handleDatabaseError(error);
+            next(error);
         }
     }
 });
 
 // Delete an order detail delivery by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const repo = await getOrderDetailDeliveriesRepository();
         await repo.delete(parseInt(req.params.id));
@@ -168,7 +168,7 @@ router.delete('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Order detail delivery not found');
         } else {
-            handleDatabaseError(error);
+            next(error);
         }
     }
 });

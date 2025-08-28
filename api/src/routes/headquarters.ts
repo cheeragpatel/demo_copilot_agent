@@ -102,34 +102,34 @@
 import express from 'express';
 import { Headquarters } from '../models/headquarters';
 import { getHeadquartersRepository } from '../repositories/headquartersRepo';
-import { handleDatabaseError, NotFoundError } from '../utils/errors';
+import { NotFoundError } from '../utils/errors';
 
 const router = express.Router();
 
 // Create a new headquarters
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const repo = await getHeadquartersRepository();
         const newHeadquarters = await repo.create(req.body as Omit<Headquarters, 'headquartersId'>);
         res.status(201).json(newHeadquarters);
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Get all headquarters
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const repo = await getHeadquartersRepository();
         const headquarters = await repo.findAll();
         res.json(headquarters);
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Get a headquarters by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const repo = await getHeadquartersRepository();
         const headquarters = await repo.findById(parseInt(req.params.id));
@@ -139,12 +139,12 @@ router.get('/:id', async (req, res) => {
             res.status(404).send('Headquarters not found');
         }
     } catch (error) {
-        handleDatabaseError(error);
+        next(error);
     }
 });
 
 // Update a headquarters by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const repo = await getHeadquartersRepository();
         const updatedHeadquarters = await repo.update(parseInt(req.params.id), req.body);
@@ -153,13 +153,13 @@ router.put('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Headquarters not found');
         } else {
-            handleDatabaseError(error);
+            next(error);
         }
     }
 });
 
 // Delete a headquarters by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const repo = await getHeadquartersRepository();
         await repo.delete(parseInt(req.params.id));
@@ -168,7 +168,7 @@ router.delete('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Headquarters not found');
         } else {
-            handleDatabaseError(error);
+            next(error);
         }
     }
 });

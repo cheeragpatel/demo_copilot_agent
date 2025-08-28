@@ -107,29 +107,29 @@ import { handleDatabaseError, NotFoundError } from '../utils/errors';
 const router = express.Router();
 
 // Create a new order
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const repo = await getOrdersRepository();
         const newOrder = await repo.create(req.body as Omit<Order, 'orderId'>);
         res.status(201).json(newOrder);
     } catch (error) {
-        handleDatabaseError(error);
+    next(error);
     }
 });
 
 // Get all orders
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const repo = await getOrdersRepository();
         const orders = await repo.findAll();
         res.json(orders);
     } catch (error) {
-        handleDatabaseError(error);
+    next(error);
     }
 });
 
 // Get an order by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const repo = await getOrdersRepository();
         const order = await repo.findById(parseInt(req.params.id));
@@ -139,12 +139,12 @@ router.get('/:id', async (req, res) => {
             res.status(404).send('Order not found');
         }
     } catch (error) {
-        handleDatabaseError(error);
+    next(error);
     }
 });
 
 // Update an order by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const repo = await getOrdersRepository();
         const updatedOrder = await repo.update(parseInt(req.params.id), req.body);
@@ -153,13 +153,13 @@ router.put('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Order not found');
         } else {
-            handleDatabaseError(error);
+        next(error);
         }
     }
 });
 
 // Delete an order by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const repo = await getOrdersRepository();
         await repo.delete(parseInt(req.params.id));
@@ -168,7 +168,7 @@ router.delete('/:id', async (req, res) => {
         if (error instanceof NotFoundError) {
             res.status(404).send('Order not found');
         } else {
-            handleDatabaseError(error);
+        next(error);
         }
     }
 });
