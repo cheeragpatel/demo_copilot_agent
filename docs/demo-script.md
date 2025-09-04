@@ -22,17 +22,14 @@ This demo app can be used to show a number of Copilot features:
 - **About the App:** This is a modern TypeScript web-app with separate API and Frontend (React) projects that you will enhance with Copilot Agent Mode, Vision, MCP Servers and GHAS/Actions.
 - **Why:** Demonstrate how Copilot can analyze and enhance existing code automatically, understand images, vulnerabilities and testing and how you can extend Copilot's capabilities with MCP server.
 - **Demos**: You don't have to do all these demos, or do them in order. Get comfortable with the scenarios and practice them and then mix/match according to your audience.
-- **MCP Servers**: The GitHub MCP server runs via Docker. You will need to install Docker locally to run it (it should work fine in a Codespace automatically). I use Podman for my Mac. Install this _before_ you attempt this demo! You'll also need a PAT that has enough permissions for your demos. Details below.
 - **Padawan**: If you want to use Padawan, you have to ensure that it is enabled on the repo, that Actions are enabled and that you have a branch protection rule for `main`. I recommend creating a PR required for changes to Default branch with 1 required reviewer.
 - **Local vs Codespaces:**  
   - This demo can work in a Codespace - but some scenarios (like running Playwright tests) require that you work in a local VSCode (clone the repo locally)
   - The visibility of the API port (3000) must be set to `public`. I have set this in the port attributes of the devcontainer file, but it seems that this config setting isn't always obeyed. Check before the demo! If you forget this, you will see CORS errors when the frontend tries to reach the API.
-  - Make sure you **PRACTICE** this demo _before_ trying it in front of customers
   - Remember, Copilot is non-deterministic so you can't always predict exact behavior. Make sure you are comfortable with this environment so you can pivot quicky!
   - You don't have to use **VS Code Insiders** Version unless you want to demo features that you know are in preview.
     - If you want to access the Insiders Version in the web-version of a Codespace, click on the gear-icon on the bottom-left and select `Switch to Insiders Version...`
 
-  ![Switch to Insiders](./vscode-switch-to-insiders.png)
 
 ### **Building, Running and Debugging the code**
 
@@ -56,7 +53,7 @@ This demo requires the following:
 
 ### **MCP Server install and config (optional)**
 
-> You can skip the MCP Server demos if you want to, so this is optional. Also, you can run the GitHub MCP Server demo just fine in a Codespace, but will need Docker (or Podman or equivalent) to run the GitHub MCP Server locally. Also, the Playwright MCP Server demo will not work in a Codespace since it has to open a browser.
+> You can skip the MCP Server demos if you want to, so this is optional.The Playwright MCP Server demo will not work in a Codespace since it has to open a browser.
 
 If you are wanting to show MCP server integration, you will need to set up and configure the MCP servers _prior_ to the demo. I have included the necessary `mcp` config in the [mcp.json](../.vscode/mcp.json) file. Open the file and use the HUD display above the servers to start them:
 
@@ -64,20 +61,10 @@ If you are wanting to show MCP server integration, you will need to set up and c
 
 You can also use the Command Palette to start the MCP servers.
 
-> Note: there are 2 GitHub MCP server: `github-local` and `github-remote`. The local server runs off `docker` (you may want to change this to `podman` if you have Podman installed). This will prompt for a PAT. The remote server connects to the Remote MCP server and uses OAuth to authenticate. **Start one or the other, not both**!
-
 #### Start the Playwright MCP Server
 
 - Use the cmd palette `Cmd/Ctrl + Shift + P` -> `MCP: List servers` -> `playwright` -> `Start server`
 
-##### Start the GitHub MCP Server
-
-> Generate a fine-grained PAT that has permissions to read/write Issues and PRs, context and whatever other features you want to demo. You can create this at the org/repo level. I suggest creating a PAT and storing it in a key vault (or 1Password) so that you have it handy.
-
-- This server runs via Docker image, so you will need Docker to be installed and running before starting this server. I use Podman on my Mac.
-- Use the cmd palette `Cmd/Ctrl + Shift + P` -> `MCP: List servers` -> `github` -> `Start server`. The first time you run this, you will have to supply a PAT.
-
-> **Pro tip:** If you want to change the PAT, open the Settings json file. You will see `"id": "github_token" = ****` in the `input` section. Right-click on the `***` section to edit or clear the cached token. (The `***` is a GUI feature - the value is not actually stored in the json file)
 
 ### **Demo: Custom Prompt Files and Reusable Workflows**
 - **What to show:** Reusing custom prompts to streamline AI-native workflow and demonstrate prompt engineering best practices
@@ -214,10 +201,7 @@ You can also use the Command Palette to start the MCP servers.
     * Implement logging and monitoring using [TAO](../docs/tao.md)
       - assume TAO is installed and never add the package
     ```
-  1. Show the [TAO](./tao.md) documentation to demonstrate the fictional internal library
   1. Ask Copilot to `add observability to the Supplier route using our internal standards`
-  1. Show how Copilot uses the custom instructions to implement TAO observability patterns
-  1. **Note**: Explain that this will not compile since TAO doesn't really exist - this demonstrates how custom instructions can reference internal frameworks
   1. **Key Takeaway**: Custom instructions allow teams to encode their specific practices, internal libraries, and coding standards
 
 ### **Demo: Copilot and Application Security**
@@ -236,25 +220,6 @@ You can also use the Command Palette to start the MCP servers.
   1. Chat with Copilot to address one of these issues: `generate a fix for ...`
   1. (Optional with GitHub MCP Server): Ask Copilot to `create an issue to fix ...` and select a vulnerability for Copilot to create an Issue
 
-### **Demo: GHAS and Autofix for existing alerts**
-
-- **What to show:** GHAS Autofix can fix existing alerts once they area detected.
-- **Why:** Demonstrate that Autofix is built into the platform using Copilot.
-- **How:**  
-  1. Open the repo in the web, navigate to Settings and enable Code scanning
-  1. The scan should return at least 1 vulnerability, including a SQL injection (`Database query built from user-controlled sources`)
-  1. Show "Generate fix" and how that can auto-generate a fix
-  1. Show how you can Chat about this vulnerability and fix in Chat
-
-### **Demo: Autofix in PRs**
-
-- **What to show:** GHAS Autofix built into PRs
-- **Why:** Demonstrate that Autofix becomes a part of the developer workflow naturally at the PR
-- **How:**  
-  1. Open the Chat window and enter `/code-injection` to run the code injection prompt.
-  2. **Note**: Sometimes a model will refuse since this is "bad" - try another model in this case and show customers how "responsible" Copilot is.
-  3. The prompt should create a new branch, change the `delivery.ts` route to add a vulnerability, and push.
-  4. Create a PR for the new branch and show how GHAS alerts and suggests a fix inline in the PR.
 
 ### **Demo: Using `/handoff` Custom Prompt for Session Management**
 - **What to show:** Using the custom `/handoff` prompt to hand off Ask/Agent work to another session with proper context preservation.
