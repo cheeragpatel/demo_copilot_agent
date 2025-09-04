@@ -1,4 +1,4 @@
-# 🚀 GitHub Copilot Agent Mode Hands‑On Workshop (Beginner Friendly)
+# 🚀 GitHub Copilot Agent Mode Hands‑On Workshop
 
 > **Format:** Onsite, instructor-led, highly interactive, “learn by doing”  
 > **Environment:** Local VS Code *or* GitHub Codespaces  
