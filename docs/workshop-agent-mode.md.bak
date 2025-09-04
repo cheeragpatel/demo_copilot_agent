@@ -177,31 +177,6 @@ Add a console log at the start of the suppliers GET route indicating how many su
 
 **Scenario:** Product listing exists, but no cart. We’ll add: Cart page, NavBar badge, add/remove, subtotal.
 
-
-### 📋 Cart Feature Acceptance Criteria
-
-**Must Have (Core MVP)**
-- [ ] **Cart Page**: Dedicated route `/cart` displaying added items
-- [ ] **Navigation Integration**: NavBar shows cart badge with item count (0-99+)
-- [ ] **Add to Cart**: Click product tile → item appears in cart with quantity
-- [ ] **Remove from Cart**: Remove individual items or adjust quantities
-- [ ] **Subtotal Calculation**: Real-time price calculation including tax/shipping if applicable
-- [ ] **Empty State**: User-friendly message when cart is empty
-- [ ] **Persistence**: Cart contents survive page refresh (localStorage minimum)
-
-**Should Have (Enhanced UX)**
-- [ ] **Quantity Controls**: +/- buttons for quantity adjustment
-- [ ] **Duplicate Handling**: Adding same product increases quantity vs creates duplicate
-- [ ] **Visual Feedback**: Loading states, success messages, error handling
-- [ ] **Responsive Design**: Works on mobile and desktop
-- [ ] **Accessibility**: Screen reader friendly, keyboard navigation
-
-**Error Scenarios**
-- [ ] **Network Issues**: Graceful handling if API calls fail
-- [ ] **Invalid Data**: Handle missing product info or corrupted cart data
-- [ ] **Edge Cases**: Zero quantity, negative prices, out-of-stock items
-
-### Implementation Paths
 ### Path A (Beginner Friendly – Guided Prompt File)
 
 If a prompt file (e.g., `demo-cart-page.prompt.md`) exists:
@@ -397,44 +372,6 @@ Checklist for Upgrade:
 | Time Boxing (10-min sprint) | Test module | Maintain momentum |
 
 > 💡 Tip: Celebrate *first small success*, not perfection.
-n---
-
-## ❌ Prompt Anti-Patterns & Risk Mitigation
-
-### What NOT to Do with Agent Mode
-
-| Anti-Pattern | Why It Fails | Better Approach | Risk Level |
-|--------------|--------------|-----------------|------------|
-| "Build me an app" | Too vague; no constraints | Start with specific feature/component | 🔴 High |
-| "Fix all bugs" | Undefined scope; may break working code | Target specific failing tests | 🔴 High |
-| "Make it production-ready" | Subjective; lacks criteria | Define specific production requirements | 🟠 Medium |
-| "Add security" | Generic; may over-engineer | "Review authentication in login.js" | 🟠 Medium |
-| "Refactor everything" | Too broad; high change risk | "Refactor UserService for readability" | 🟠 Medium |
-| "Make it faster" | No baseline; unclear metrics | "Optimize API response time <200ms" | 🟡 Low |
-
-### Governance Guidelines
-
-**When to Use Agent Mode**
-- ✅ Well-defined, isolated tasks
-- ✅ Boilerplate code generation
-- ✅ Test creation for existing code
-- ✅ Documentation updates
-- ✅ Refactoring with clear constraints
-
-**When NOT to Use Agent Mode**
-- ❌ Mission-critical production code without review
-- ❌ Security-sensitive authentication/authorization logic
-- ❌ Database schema changes
-- ❌ Major architectural decisions
-- ❌ Code you don't understand enough to review
-
-**Risk Mitigation Strategies**
-1. **Start Small**: Begin with low-risk changes to build trust
-2. **Review Everything**: Never accept changes without understanding them
-3. **Test Immediately**: Run tests and builds after each Agent session
-4. **Version Control**: Commit working state before major Agent tasks
-5. **Pair Review**: Have teammate review Agent-generated code
-6. **Rollback Plan**: Know how to revert changes quickly
 
 ---
 
@@ -486,53 +423,11 @@ n---
 
 ---
 
-## 🧪 Enhanced Reflection & Self-Assessment
+## 🧪 Reflection Questions (End)
 
-### Immediate Reflection (End of Session)
-Rate your confidence (1-10) and provide specific examples:
-
-**Technical Competency**
-- [ ] Environment setup and troubleshooting: ___/10
-  - Example challenge overcome: _______________
-- [ ] Choosing appropriate Copilot mode: ___/10  
-  - Best mode selection decision: _______________
-- [ ] Writing effective prompts: ___/10
-  - Most improved prompt iteration: _______________
-- [ ] Reviewing and refining Agent output: ___/10
-  - Example of good catch/improvement: _______________
-
-**Strategic Understanding**  
-- [ ] When to use vs avoid Agent Mode: ___/10
-- [ ] Risk assessment of AI-generated code: ___/10
-- [ ] Breaking down complex tasks into Agent-friendly chunks: ___/10
-
-### Practical Application Planning
-- **What prompt gave you the *best* result today? Why?**
-  _______________________________________________
-
-- **What's one workflow you'll automate first next week?**
-  _______________________________________________
-
-- **Where did Agent Mode feel "too confident," and how will you constrain it next time?**
-  _______________________________________________
-
-- **What's your biggest concern about using Agent Mode in real projects?**
-  _______________________________________________
-
-- **Which acceptance criteria approach will you adopt for your team?**
-  _______________________________________________
-
-### 30-Day Follow-Up Commitment
-- [ ] I will try Agent Mode on a real work task within 1 week
-- [ ] I will create my first custom prompt file within 2 weeks  
-- [ ] I will share learnings with my team within 30 days
-- [ ] I will participate in follow-up survey to improve this workshop
-
-### Success Metrics Achievement
-- [ ] Core competencies completed: ___/6
-- [ ] Advanced competencies completed: ___/3  
-- [ ] Overall confidence using Agent Mode independently: ___/10
-- [ ] Likelihood to recommend this workshop: ___/10
+- What prompt gave you the *best* result today? Why?
+- What’s one workflow you’ll automate first next week?
+- Where did Agent Mode feel “too confident,” and how will you constrain it next time?
 
 ---
 
