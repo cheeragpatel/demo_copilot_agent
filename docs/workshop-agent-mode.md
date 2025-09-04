@@ -6,6 +6,18 @@
 > **Duration:** 3.5–4 hours (with optional trims)  
 > **Core Goal:** Leave with practical confidence using Agent Mode to build, test, refactor, and automate.
 
+## 📚 Quick Navigation
+
+| Section | Focus | Time |
+|---------|-------|------|
+| [Why This Workshop](#-why-this-workshop-exists) | Context & motivation | 5 min |
+| [Learning Outcomes](#-learning-outcomes--success-criteria) | Goals & success metrics | 10 min |
+| [Agenda](#️-agenda-at-a-glance) | Schedule overview | 5 min |
+| [Prerequisites](#-prerequisites--accessibility) | Setup & accessibility | 15 min |
+| [Modules 0-8](#️-project-flyover-module-0) | Core workshop content | 3+ hours |
+| [Troubleshooting](#-extended-troubleshooting-guide) | Problem solving | As needed |
+| [Reflection](#-enhanced-reflection--self-assessment) | Assessment & planning | 15 min |
+
 ---
 
 ## 🧭 Why This Workshop Exists
@@ -102,18 +114,39 @@ By the end of this workshop, you will demonstrate measurable competency in:
 
 ### Pre-Workshop Setup (15 minutes)
 
+**Repository Setup**
 ```bash
-git clone <your-fork-or-demo-repo-url> demo-copilot-workshop
+# Clone the workshop repository
+git clone https://github.com/cheeragpatel/demo_copilot_agent demo-copilot-workshop
 cd demo-copilot-workshop
+
+# Install dependencies
 npm install
+
+# Verify Node.js version (should be 18+)
+node --version
 ```
 
-### Build Sanity Check
-
+**Environment Validation**
 ```bash
+# Test API build
 npm run build --workspace=api
+
+# Test Frontend build  
 npm run build --workspace=frontend
+
+# Initialize database (if needed)
+npm run db:init --workspace=api
+
+# Quick smoke test
+npm run test:api
 ```
+
+**VS Code Extensions (Local Setup)**
+- GitHub Copilot (required)
+- GitHub Copilot Chat (required)  
+- Prettier (recommended)
+- GitLens (optional)
 
 ### Codespaces Quick Start
 
@@ -465,12 +498,39 @@ n---
 
 ---
 
-## 🧩 Stretch Goals
+## 🧩 Advanced Stretch Goals
 
-- Generate a GitHub Actions CI workflow.
-- Ask: “Produce Terraform or Bicep skeleton for this architecture.”
-- Refactor a repository function for clarity with tests guarding behavior.
-- Create an internal cheat sheet prompt file.
+### For Fast Finishers
+If you complete the core modules early, try these progressively challenging exercises:
+
+**Level 1: Automation** (15-20 minutes)
+- [ ] Generate a GitHub Actions CI workflow that runs tests and builds on PR
+- [ ] Create deployment scripts for the frontend to GitHub Pages or Netlify
+- [ ] Build a development environment setup script for new team members
+
+**Level 2: Architecture** (20-30 minutes)  
+- [ ] Ask Agent to "Produce Terraform or Bicep skeleton for this architecture"
+- [ ] Design and implement a simple caching layer for API responses
+- [ ] Create API documentation using OpenAPI/Swagger with Agent assistance
+
+**Level 3: Quality & Governance** (25-35 minutes)
+- [ ] Implement comprehensive error boundary components for the React app
+- [ ] Refactor a repository function for clarity with comprehensive test coverage
+- [ ] Create security scanning and vulnerability assessment prompts
+- [ ] Build a code review checklist generator based on repository patterns
+
+**Level 4: Team Enablement** (30+ minutes)
+- [ ] Create an internal cheat sheet prompt file for your team's coding standards
+- [ ] Design onboarding prompts for new developers joining the project
+- [ ] Build Agent-powered code migration scripts for framework updates
+- [ ] Create custom MCP server integration for team-specific tools
+
+### Challenge Modes
+For those seeking extra complexity:
+
+**Speed Challenge**: Complete Cart feature in under 30 minutes with full test coverage
+**Constraint Challenge**: Build Cart feature with zero external dependencies added
+**Accessibility Challenge**: Implement Cart with AAA compliance and screen reader testing
 
 ---
 
