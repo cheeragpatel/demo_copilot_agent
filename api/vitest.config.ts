@@ -6,7 +6,8 @@ export default defineConfig({
     globals: false,
     environment: 'node',
     coverage: {
-      reporter: ['text', 'json', 'html'],
+      // Include json-summary so CI can read api/coverage/coverage-summary.json
+      reporter: ['text', 'json', 'json-summary', 'html'],
     },
   },
 });

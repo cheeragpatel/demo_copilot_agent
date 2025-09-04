@@ -236,15 +236,25 @@ You can also use the Command Palette to start the MCP servers.
   1. Chat with Copilot to address one of these issues: `generate a fix for ...`
   1. (Optional with GitHub MCP Server): Ask Copilot to `create an issue to fix ...` and select a vulnerability for Copilot to create an Issue
 
-### **Demo: GHAS and Autofix**
+### **Demo: GHAS and Autofix for existing alerts**
 
-- **What to show:** GHAS Autofix (our first platform AI agent)
+- **What to show:** GHAS Autofix can fix existing alerts once they area detected.
 - **Why:** Demonstrate that Autofix is built into the platform using Copilot.
 - **How:**  
-  1. Open the repo, navigate to settings and enable Code scanning
-  1. The scan should return at least 1 vulnerability
+  1. Open the repo in the web, navigate to Settings and enable Code scanning
+  1. The scan should return at least 1 vulnerability, including a SQL injection (`Database query built from user-controlled sources`)
   1. Show "Generate fix" and how that can auto-generate a fix
   1. Show how you can Chat about this vulnerability and fix in Chat
+
+### **Demo: Autofix in PRs**
+
+- **What to show:** GHAS Autofix built into PRs
+- **Why:** Demonstrate that Autofix becomes a part of the developer workflow naturally at the PR
+- **How:**  
+  1. Open the Chat window and enter `/code-injection` to run the code injection prompt.
+  2. **Note**: Sometimes a model will refuse since this is "bad" - try another model in this case and show customers how "responsible" Copilot is.
+  3. The prompt should create a new branch, change the `delivery.ts` route to add a vulnerability, and push.
+  4. Create a PR for the new branch and show how GHAS alerts and suggests a fix inline in the PR.
 
 ### **Demo: Using `/handoff` Custom Prompt for Session Management**
 - **What to show:** Using the custom `/handoff` prompt to hand off Ask/Agent work to another session with proper context preservation.

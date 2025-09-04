@@ -11,12 +11,63 @@ import { DB_CONFIG, TEST_DB_CONFIG } from './config';
 const Database =
   process.env.NODE_ENV === 'development' ? sqlite3.verbose().Database : sqlite3.Database;
 
-interface DatabaseConnection {
-  db: sqlite3.Database;
-  run: (sql: string, params?: any[]) => Promise<{ lastID?: number; changes: number }>;
-  get: <T = any>(sql: string, params?: any[]) => Promise<T | undefined>;
-  all: <T = any>(sql: string, params?: any[]) => Promise<T[]>;
-  close: () => Promise<void>;
+/*
+ * Database connection and query execution
+ */
+class DatabaseConnection {
+  public db: sqlite3.Database;
+
+  constructor(db: sqlite3.Database) {
+    this.db = db;
+  }
+
+  public run(sql: string, params: any[] = []): Promise<{ lastID?: number; changes: number }> {
+    return new Promise((resolve, reject) => {
+      this.db.run(sql, params, function (this: sqlite3.RunResult, err: Error | null) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ lastID: this.lastID, changes: this.changes });
+        }
+      });
+    });
+  }
+
+  public get<T = any>(sql: string, params: any[] = []): Promise<T | undefined> {
+    return new Promise<T | undefined>((resolve, reject) => {
+      this.db.get(sql, params, (err: Error | null, row: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row as T);
+        }
+      });
+    });
+  }
+
+  public all<T = any>(sql: string, params: any[] = []): Promise<T[]> {
+    return new Promise<T[]>((resolve, reject) => {
+      this.db.all(sql, params, (err: Error | null, rows: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows as T[]);
+        }
+      });
+    });
+  }
+
+  public close(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.db.close((err: Error | null) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
 }
 
 class SQLiteHelper {
@@ -104,56 +155,7 @@ class SQLiteHelper {
    * Wrap the database connection with promisified methods
    */
   private wrapConnection(db: sqlite3.Database): DatabaseConnection {
-    return {
-      db,
-      run: (sql: string, params: any[] = []) => {
-        return new Promise<{ lastID?: number; changes: number }>((resolve, reject) => {
-          db.run(sql, params, function (this: sqlite3.RunResult, err: Error | null) {
-            if (err) {
-              reject(err);
-            } else {
-              resolve({
-                lastID: this.lastID,
-                changes: this.changes,
-              });
-            }
-          });
-        });
-      },
-      get: <T = any>(sql: string, params: any[] = []) => {
-        return new Promise<T | undefined>((resolve, reject) => {
-          db.get(sql, params, (err: Error | null, row: any) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(row as T);
-            }
-          });
-        });
-      },
-      all: <T = any>(sql: string, params: any[] = []) => {
-        return new Promise<T[]>((resolve, reject) => {
-          db.all(sql, params, (err: Error | null, rows: any[]) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(rows as T[]);
-            }
-          });
-        });
-      },
-      close: () => {
-        return new Promise<void>((resolve, reject) => {
-          db.close((err: Error | null) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        });
-      },
-    };
+  return new DatabaseConnection(db);
   }
 
   /**
