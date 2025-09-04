@@ -6,6 +6,18 @@
 > **Duration:** 3.5–4 hours (with optional trims)  
 > **Core Goal:** Leave with practical confidence using Agent Mode to build, test, refactor, and automate.
 
+## 📚 Quick Navigation
+
+| Section | Focus | Time |
+|---------|-------|------|
+| [Why This Workshop](#-why-this-workshop-exists) | Context & motivation | 5 min |
+| [Learning Outcomes](#-learning-outcomes--success-criteria) | Goals & success metrics | 10 min |
+| [Agenda](#️-agenda-at-a-glance) | Schedule overview | 5 min |
+| [Prerequisites](#-prerequisites--accessibility) | Setup & accessibility | 15 min |
+| [Modules 0-8](#️-project-flyover-module-0) | Core workshop content | 3+ hours |
+| [Troubleshooting](#-extended-troubleshooting-guide) | Problem solving | As needed |
+| [Reflection](#-enhanced-reflection--self-assessment) | Assessment & planning | 15 min |
+
 ---
 
 ## 🧭 Why This Workshop Exists
@@ -22,7 +34,28 @@ We focus on:
 
 ---
 
-## 🎯 Outcomes (You Will Be Able To...)
+## 🎯 Learning Outcomes & Success Criteria
+
+By the end of this workshop, you will demonstrate measurable competency in:
+
+### Core Competencies (Required)
+- [ ] **Environment Mastery**: Successfully set up and validate development environment (local VS Code or Codespaces) with all services running
+- [ ] **Mode Selection**: Correctly identify and choose between Ask/Plan/Agent modes for 3 different scenarios (80% accuracy)
+- [ ] **Feature Implementation**: Use Agent Mode to implement the Cart feature meeting all acceptance criteria (see Module 4)
+- [ ] **Test-Driven Development**: Generate, execute, and iterate on tests with >70% code coverage improvement
+- [ ] **Workflow Automation**: Create and execute at least 1 reusable custom prompt file
+- [ ] **Prompt Engineering**: Transform 3 vague prompts into precise, actionable instructions using the refinement framework
+
+### Advanced Competencies (Optional)
+- [ ] **Security Awareness**: Identify and mitigate 2+ security risks using Agent Mode assistance
+- [ ] **External Integration**: Successfully configure and use 1 MCP server extension
+- [ ] **CI/CD Automation**: Generate functional GitHub Actions workflow or deployment script
+
+### Success Metrics
+- **Completion Rate**: 80% of required competencies demonstrated
+- **Quality Standard**: All generated code passes linting and builds successfully  
+- **Practical Application**: Able to use learned workflows in real projects within 1 week
+- **Confidence Level**: Self-report 7/10 or higher confidence in using Agent Mode independently
 
 1. Spin up a ready-to-code environment in **local VS Code or Codespaces**.
 2. Distinguish **Ask vs Plan vs Agent Mode** and choose the right one.
@@ -56,30 +89,64 @@ We focus on:
 
 ---
 
-## 🧑‍💻 Prerequisites
+## 🧑‍💻 Prerequisites & Accessibility
 
-### Accounts & Tools
+### Technical Requirements
 
-- GitHub account w/ Copilot enabled.
+- GitHub account with Copilot enabled
 - One of:
-  - Local machine: Node.js 18+, Git, VS Code.
-  - **OR** GitHub Codespace (recommended for uniformity).
-- (Optional Advanced): Azure CLI, GitHub CLI, local Chrome/Chromium (for MCP Playwright).
+  - **Local machine**: Node.js 18+, Git, VS Code with Copilot extension
+  - **OR GitHub Codespace** (recommended for consistency across participants)
+- (Optional Advanced): Azure CLI, GitHub CLI, local Chrome/Chromium (for MCP Playwright)
 
-### Clone / Open
+### Accessibility & Learning Accommodations
 
+- **Visual**: Screen reader compatible; high contrast mode available in VS Code
+- **Motor**: All exercises work with keyboard navigation; mouse interactions are optional
+- **Cognitive**: Self-paced modules with clear checkpoints; repeat exercises encouraged
+- **Technical Background**: No prior AI/ML knowledge required; basic web development helpful but not essential
+- **Time Zones**: Async-friendly exercises; recordings available for review
+
+### Experience Levels Supported
+- **Beginner**: Guided prompt files and step-by-step instructions provided
+- **Intermediate**: Choose-your-own-path options with creative freedom
+- **Advanced**: Optional deep-dive tracks (security, MCP, CI/CD)
+
+### Pre-Workshop Setup (15 minutes)
+
+**Repository Setup**
 ```bash
-git clone <your-fork-or-demo-repo-url> demo-copilot-workshop
+# Clone the workshop repository
+git clone https://github.com/cheeragpatel/demo_copilot_agent demo-copilot-workshop
 cd demo-copilot-workshop
+
+# Install dependencies
 npm install
+
+# Verify Node.js version (should be 18+)
+node --version
 ```
 
-### Build Sanity Check
-
+**Environment Validation**
 ```bash
+# Test API build
 npm run build --workspace=api
+
+# Test Frontend build  
 npm run build --workspace=frontend
+
+# Initialize database (if needed)
+npm run db:init --workspace=api
+
+# Quick smoke test
+npm run test:api
 ```
+
+**VS Code Extensions (Local Setup)**
+- GitHub Copilot (required)
+- GitHub Copilot Chat (required)  
+- Prettier (recommended)
+- GitLens (optional)
 
 ### Codespaces Quick Start
 
@@ -143,6 +210,31 @@ Add a console log at the start of the suppliers GET route indicating how many su
 
 **Scenario:** Product listing exists, but no cart. We’ll add: Cart page, NavBar badge, add/remove, subtotal.
 
+
+### 📋 Cart Feature Acceptance Criteria
+
+**Must Have (Core MVP)**
+- [ ] **Cart Page**: Dedicated route `/cart` displaying added items
+- [ ] **Navigation Integration**: NavBar shows cart badge with item count (0-99+)
+- [ ] **Add to Cart**: Click product tile → item appears in cart with quantity
+- [ ] **Remove from Cart**: Remove individual items or adjust quantities
+- [ ] **Subtotal Calculation**: Real-time price calculation including tax/shipping if applicable
+- [ ] **Empty State**: User-friendly message when cart is empty
+- [ ] **Persistence**: Cart contents survive page refresh (localStorage minimum)
+
+**Should Have (Enhanced UX)**
+- [ ] **Quantity Controls**: +/- buttons for quantity adjustment
+- [ ] **Duplicate Handling**: Adding same product increases quantity vs creates duplicate
+- [ ] **Visual Feedback**: Loading states, success messages, error handling
+- [ ] **Responsive Design**: Works on mobile and desktop
+- [ ] **Accessibility**: Screen reader friendly, keyboard navigation
+
+**Error Scenarios**
+- [ ] **Network Issues**: Graceful handling if API calls fail
+- [ ] **Invalid Data**: Handle missing product info or corrupted cart data
+- [ ] **Edge Cases**: Zero quantity, negative prices, out-of-stock items
+
+### Implementation Paths
 ### Path A (Beginner Friendly – Guided Prompt File)
 
 If a prompt file (e.g., `demo-cart-page.prompt.md`) exists:
@@ -292,16 +384,38 @@ Checklist for Upgrade:
 
 ---
 
-## 🚑 Troubleshooting Matrix
+## 🚑 Extended Troubleshooting Guide
 
-| Symptom | Likely Cause | Fast Fix |
-|---------|--------------|----------|
-| API 404 | Server not running | Start dev task / correct port |
-| CORS in browser | API port private (Codespaces) | Make port Public |
-| Badge not updating | State not wired to context/provider | Inspect component diff; re-prompt with constraint |
-| Agent stalls mid-plan | Overly vague / no actionable steps | Re-run in Plan Mode first |
-| Repeated test failure | Flaky assumption in test logic | Ask Agent to stabilize with deterministic input |
-| Playwright MCP unavailable | Running in web Codespace | Explain limitation; generate only |
+### Environment Issues
+| Symptom | Likely Cause | Fast Fix | Prevention |
+|---------|--------------|----------|------------|
+| API 404 | Server not running | `npm run dev:api` / check port 3000 | Always run build sanity check first |
+| CORS in browser | API port private (Codespaces) | Make port Public in Ports tab | Set ports to Public by default |
+| `npm install` fails | Node version mismatch | Use Node 18+ or nvm | Check `.nvmrc` file for version |
+| Docker containers won't start | Port conflicts or insufficient memory | Stop other services; increase Docker memory | Use `docker-compose down` before starting |
+| VS Code Copilot not responding | Extension needs reload | Cmd/Ctrl+Shift+P → "Reload Window" | Check Copilot status in status bar |
+
+### Agent Mode Issues  
+| Symptom | Likely Cause | Fast Fix | Better Prompting |
+|---------|--------------|----------|------------------|
+| Agent stalls mid-plan | Overly vague / no actionable steps | Re-run in Plan Mode first | Add specific constraints and examples |
+| Badge not updating | State not wired to context/provider | Inspect component diff; re-prompt with constraint | Specify exact state management approach |
+| Repeated test failure | Flaky assumption in test logic | Ask Agent to stabilize with deterministic input | Request specific test data and mocking |
+| Agent makes too many changes | Scope creep in prompt | Use `git checkout` to revert; add constraints | Start with "Make minimal changes to..." |
+| Generated code doesn't match design | Missing visual context | Attach design files; describe layout | Include specific UI requirements |
+
+### Advanced Features
+| Symptom | Likely Cause | Fast Fix | Alternative |
+|---------|--------------|----------|-------------|
+| Playwright MCP unavailable | Running in web Codespace | Explain limitation; generate only | Use local VS Code or plain test generation |
+| GitHub CLI commands fail | Authentication not set up | `gh auth login` | Use web interface for GitHub operations |
+| Security prompts too generic | Lacking codebase context | Point to specific files/functions | Use targeted security linting tools |
+
+### Getting Help
+- **During Workshop**: Raise hand or use chat function
+- **Stuck on Exercise**: Skip and return later; all modules can be done independently  
+- **Technical Issues**: Pair with neighbor or ask instructor for 1:1 debugging
+- **Accessibility Needs**: Contact facilitator for alternative approaches
 
 ---
 
@@ -316,6 +430,44 @@ Checklist for Upgrade:
 | Time Boxing (10-min sprint) | Test module | Maintain momentum |
 
 > 💡 Tip: Celebrate *first small success*, not perfection.
+n---
+
+## ❌ Prompt Anti-Patterns & Risk Mitigation
+
+### What NOT to Do with Agent Mode
+
+| Anti-Pattern | Why It Fails | Better Approach | Risk Level |
+|--------------|--------------|-----------------|------------|
+| "Build me an app" | Too vague; no constraints | Start with specific feature/component | 🔴 High |
+| "Fix all bugs" | Undefined scope; may break working code | Target specific failing tests | 🔴 High |
+| "Make it production-ready" | Subjective; lacks criteria | Define specific production requirements | 🟠 Medium |
+| "Add security" | Generic; may over-engineer | "Review authentication in login.js" | 🟠 Medium |
+| "Refactor everything" | Too broad; high change risk | "Refactor UserService for readability" | 🟠 Medium |
+| "Make it faster" | No baseline; unclear metrics | "Optimize API response time <200ms" | 🟡 Low |
+
+### Governance Guidelines
+
+**When to Use Agent Mode**
+- ✅ Well-defined, isolated tasks
+- ✅ Boilerplate code generation
+- ✅ Test creation for existing code
+- ✅ Documentation updates
+- ✅ Refactoring with clear constraints
+
+**When NOT to Use Agent Mode**
+- ❌ Mission-critical production code without review
+- ❌ Security-sensitive authentication/authorization logic
+- ❌ Database schema changes
+- ❌ Major architectural decisions
+- ❌ Code you don't understand enough to review
+
+**Risk Mitigation Strategies**
+1. **Start Small**: Begin with low-risk changes to build trust
+2. **Review Everything**: Never accept changes without understanding them
+3. **Test Immediately**: Run tests and builds after each Agent session
+4. **Version Control**: Commit working state before major Agent tasks
+5. **Pair Review**: Have teammate review Agent-generated code
+6. **Rollback Plan**: Know how to revert changes quickly
 
 ---
 
@@ -346,12 +498,39 @@ Checklist for Upgrade:
 
 ---
 
-## 🧩 Stretch Goals
+## 🧩 Advanced Stretch Goals
 
-- Generate a GitHub Actions CI workflow.
-- Ask: “Produce Terraform or Bicep skeleton for this architecture.”
-- Refactor a repository function for clarity with tests guarding behavior.
-- Create an internal cheat sheet prompt file.
+### For Fast Finishers
+If you complete the core modules early, try these progressively challenging exercises:
+
+**Level 1: Automation** (15-20 minutes)
+- [ ] Generate a GitHub Actions CI workflow that runs tests and builds on PR
+- [ ] Create deployment scripts for the frontend to GitHub Pages or Netlify
+- [ ] Build a development environment setup script for new team members
+
+**Level 2: Architecture** (20-30 minutes)  
+- [ ] Ask Agent to "Produce Terraform or Bicep skeleton for this architecture"
+- [ ] Design and implement a simple caching layer for API responses
+- [ ] Create API documentation using OpenAPI/Swagger with Agent assistance
+
+**Level 3: Quality & Governance** (25-35 minutes)
+- [ ] Implement comprehensive error boundary components for the React app
+- [ ] Refactor a repository function for clarity with comprehensive test coverage
+- [ ] Create security scanning and vulnerability assessment prompts
+- [ ] Build a code review checklist generator based on repository patterns
+
+**Level 4: Team Enablement** (30+ minutes)
+- [ ] Create an internal cheat sheet prompt file for your team's coding standards
+- [ ] Design onboarding prompts for new developers joining the project
+- [ ] Build Agent-powered code migration scripts for framework updates
+- [ ] Create custom MCP server integration for team-specific tools
+
+### Challenge Modes
+For those seeking extra complexity:
+
+**Speed Challenge**: Complete Cart feature in under 30 minutes with full test coverage
+**Constraint Challenge**: Build Cart feature with zero external dependencies added
+**Accessibility Challenge**: Implement Cart with AAA compliance and screen reader testing
 
 ---
 
@@ -367,11 +546,53 @@ Checklist for Upgrade:
 
 ---
 
-## 🧪 Reflection Questions (End)
+## 🧪 Enhanced Reflection & Self-Assessment
 
-- What prompt gave you the *best* result today? Why?
-- What’s one workflow you’ll automate first next week?
-- Where did Agent Mode feel “too confident,” and how will you constrain it next time?
+### Immediate Reflection (End of Session)
+Rate your confidence (1-10) and provide specific examples:
+
+**Technical Competency**
+- [ ] Environment setup and troubleshooting: ___/10
+  - Example challenge overcome: _______________
+- [ ] Choosing appropriate Copilot mode: ___/10  
+  - Best mode selection decision: _______________
+- [ ] Writing effective prompts: ___/10
+  - Most improved prompt iteration: _______________
+- [ ] Reviewing and refining Agent output: ___/10
+  - Example of good catch/improvement: _______________
+
+**Strategic Understanding**  
+- [ ] When to use vs avoid Agent Mode: ___/10
+- [ ] Risk assessment of AI-generated code: ___/10
+- [ ] Breaking down complex tasks into Agent-friendly chunks: ___/10
+
+### Practical Application Planning
+- **What prompt gave you the *best* result today? Why?**
+  _______________________________________________
+
+- **What's one workflow you'll automate first next week?**
+  _______________________________________________
+
+- **Where did Agent Mode feel "too confident," and how will you constrain it next time?**
+  _______________________________________________
+
+- **What's your biggest concern about using Agent Mode in real projects?**
+  _______________________________________________
+
+- **Which acceptance criteria approach will you adopt for your team?**
+  _______________________________________________
+
+### 30-Day Follow-Up Commitment
+- [ ] I will try Agent Mode on a real work task within 1 week
+- [ ] I will create my first custom prompt file within 2 weeks  
+- [ ] I will share learnings with my team within 30 days
+- [ ] I will participate in follow-up survey to improve this workshop
+
+### Success Metrics Achievement
+- [ ] Core competencies completed: ___/6
+- [ ] Advanced competencies completed: ___/3  
+- [ ] Overall confidence using Agent Mode independently: ___/10
+- [ ] Likelihood to recommend this workshop: ___/10
 
 ---
 
