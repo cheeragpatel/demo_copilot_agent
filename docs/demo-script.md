@@ -236,44 +236,25 @@ You can also use the Command Palette to start the MCP servers.
   1. Chat with Copilot to address one of these issues: `generate a fix for ...`
   1. (Optional with GitHub MCP Server): Ask Copilot to `create an issue to fix ...` and select a vulnerability for Copilot to create an Issue
 
-### **Demo: SQL Injection Vulnerability (Code Scanning PR Integration)**
+### **Demo: GHAS and Autofix for existing alerts**
 
-- **What to show:** Code Scanning catching a code vulnerability in a PR flow.
-- **Why:** Once Code Scanning is enabled, developers get instant feedback in the PR flow, leading to good security and good developer experience _at the same time_.
-
-- **Prerequisites**
-  1. Enable Code Scanning with the default configuration on the repo (Settings → Code security and analysis → Code scanning → “Set up default configuration”). This creates the CodeQL workflow so PRs are scanned automatically.
-  2. Create a Branch Ruleset requiring reviews. TODO
-
-**How**
-1) Run the custom prompt
-  - Open `.github/prompts/sql-injection.prompt.md` and click Run (or use Command Palette → “Prompts: Run Prompt”).
-  - Note: This demo doesn’t work with all models. Some refuse to insert insecure code. Gemini 2.5 Pro seems to work, but if you can't ge a model to work, use the manual fallback below.
-
-2) Verify the change
-  - The prompt will propose edits to the API route at `api/src/routes/product.ts`, introducing an intentionally vulnerable SQL pattern for demonstration purposes.
-
-3) Manual fallback (if the model won’t apply the change)
-  - Open the same prompt file `.github/prompts/sql-injection.prompt.md`.
-  - Copy the code indicated in the script and paste it directly into `api/src/routes/product.ts` at the location specified by the prompt, then save the file.
-
-4) Create a PR off a branch to trigger Code Scanning
-  - Create a new branch, commit the change, and push.
-  - Open a Pull Request from your branch. The CodeQL workflow (default config) will run and should flag the SQL Injection pattern in the PR.
-  - Show the code scanning alert on the PR as well as the Autofix suggestion.
-  - Optionally, ask Copilot to explain and remediate in the IDE.
-
-> **Tip: ** If you’re short on time, you can pre-create the branch with the change and simply open the PR live to show Code Scanning catching the issue.
-
-### **Demo: GHAS and Autofix**
-
-- **What to show:** GHAS Autofix (our first platform AI agent)
+- **What to show:** GHAS Autofix can fix existing alerts once they area detected.
 - **Why:** Demonstrate that Autofix is built into the platform using Copilot.
 - **How:**  
-  1. Open the repo, navigate to settings and enable Code scanning
-  1. The scan should return at least 1 vulnerability
+  1. Open the repo in the web, navigate to Settings and enable Code scanning
+  1. The scan should return at least 1 vulnerability, including a SQL injection (`Database query built from user-controlled sources`)
   1. Show "Generate fix" and how that can auto-generate a fix
   1. Show how you can Chat about this vulnerability and fix in Chat
+
+### **Demo: Autofix in PRs**
+
+- **What to show:** GHAS Autofix built into PRs
+- **Why:** Demonstrate that Autofix becomes a part of the developer workflow naturally at the PR
+- **How:**  
+  1. Open the Chat window and enter `/code-injection` to run the code injection prompt.
+  2. **Note**: Sometimes a model will refuse since this is "bad" - try another model in this case and show customers how "responsible" Copilot is.
+  3. The prompt should create a new branch, change the `delivery.ts` route to add a vulnerability, and push.
+  4. Create a PR for the new branch and show how GHAS alerts and suggests a fix inline in the PR.
 
 ### **Demo: Using `/handoff` Custom Prompt for Session Management**
 - **What to show:** Using the custom `/handoff` prompt to hand off Ask/Agent work to another session with proper context preservation.
