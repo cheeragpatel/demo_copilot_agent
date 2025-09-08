@@ -2,35 +2,36 @@
 
 > **Format:** Onsite, instructor-led, highly interactive, “learn by doing”  
 > **Environment:** Local VS Code *or* GitHub Codespaces  
-> **Audience:** Developers new to Copilot, Agent Mode, and possibly VS Code  
-> **Duration:** 3.5–4 hours (with optional trims)  
-> **Core Goal:** Leave with practical confidence using Agent Mode to build, test, refactor, and automate.
-
+> **Audience:** Developers who have some experience with GitHub Copilot who can learn new capabilities including Agent Mode, custom instructions, coding agent, and MCP.
+> **Duration:** 3.5–4 hours 
+> **Core Goal:** Leave with understanding of current Copilot capabilities to enable productivity gains in daily work.
 ---
 
 ## 🧭 Why This Workshop Exists
 
-You’ve seen AI generate snippets. Now you’ll experience an AI *teammate* that plans, edits multiple files, runs tools, and iterates. This workshop turns anxiety (“Will it break my code?”) into confidence (“I know how to steer it.”).
+You’ve seen AI generate snippets. Now you’ll experience an AI *teammate* that plans, edits multiple files, runs tools, and iterates. 
 
 We focus on:
 
 - Reducing first-time friction (setup, UI orientation)
 - Building something real (Cart feature) collaboratively with Agent Mode
 - Improving test coverage and reasoning through failures
-- Reinforcing repeatability with custom prompts & handoffs
-- Optional advanced tracks: security, MCP, CI/CD
+- Understand customization options and reinforcing repeatability with custom prompts & handoffs
+- Working with coding agent and code review agent
+- Optional tracks: security, MCP, CI/CD
 
 ---
 
 ## 🎯 Outcomes (You Will Be Able To...)
 
 1. Spin up a ready-to-code environment in **local VS Code or Codespaces**.
-2. Distinguish **Ask vs Plan vs Agent Mode** and choose the right one.
+2. Distinguish **Ask vs Edit vs Agent vs Custom Modes** and choose the right one.
 3. Use Agent Mode to implement a multi-file feature (Cart) from a design.
-4. Generate, run, and refine tests—embracing *self-healing*.
+4. Generate, run, and refine tests — embracing *self-healing*.
 5. Capture reusable workflows via **custom prompt files**.
-6. (Optional) Explore **MCP Servers**, GitHub automation & security prompts.
-7. Refine vague prompts into precise, high-impact instructions.
+6. Use Coding agent and code review agent to work asynchronously.
+7. (Optional) Explore **MCP Servers**, GitHub automation & security prompts.
+8. Refine vague prompts into precise, high-impact instructions.
 
 > 🔄 Mindset Shift: You aren’t delegating *creativity*—you’re delegating *mechanical labor*.
 
@@ -38,21 +39,24 @@ We focus on:
 
 ## 🗺️ Agenda At a Glance
 
-| Time | Module | Theme | Energy Marker |
-|------|--------|-------|---------------|
-| 00:00–00:15 | 0 | Setup & Orientation | 👋 Icebreaker |
-| 00:15–00:35 | 1 | Copilot Concepts | 💡 First “Aha” |
-| 00:35–01:10 | 2 | First Agent Task | ✅ Safe Win |
-| 01:10–01:25 | 3 | Break + Q&A | ☕ Reset |
-| 01:25–02:05 | 4 | Cart Feature Build | 🛠️ Flow Zone |
-| 02:05–02:40 | 5 | Test Coverage Boost | 🧪 Confidence |
-| 02:40–03:05 | 6 | Custom Prompts & Handoff | 🗂️ Reuse |
-| 03:05–03:25 | 7A | Security/Observability (Opt) | 🛡️ Insight |
-| 03:05–03:25 | 7B | MCP & Browser Testing (Opt) | 🌐 Extend |
-| 03:25–03:45 | 8 | Prompt Refinement | 🎯 Mastery |
-| 03:45–04:00 | Buffer | Stretch / Feedback | 🔁 Close |
+This workshop will start with 1 - 1.5 hours of instructor-led presentations and demos, followed by 2 hours of hands-on exercises (module details below). The schedule is flexible to allow for Q&A and discussion.  We will wrap up with a discussion on use cases that have been successful in your organization.
 
-> ⏳ **2‑Hour Variant:** Run 0 → 4, slice 5 short, jump to 8.
+### Workshop Modules
+
+| Module | Theme | Energy Marker |
+|--------|-------|---------------|
+| 0 | Setup & Orientation | 👋 Icebreaker |
+| 1 | Copilot Concepts | 💡 First “Aha” |
+| 2 | First Agent Task | ✅ Safe Win |
+| 3 | Break + Q&A | ☕ Reset |
+| 4 | Cart Feature Build | 🛠️ Flow Zone |
+| 5 | Test Coverage Boost | 🧪 Confidence |
+| 6 | Context and Custom Prompts | 🗂️ Optimize |
+| 7 | Coding Agent & Code Review Agent | 🤖 Assist |
+| 8 | Prompt Refinement | 🎯 Mastery |
+| 9A | Security/Observability (Opt) | 🛡️ Insight |
+| 9B | MCP & Browser Testing (Opt) | 🌐 Extend |
+| Buffer | Stretch / Feedback | 🔁 Close |
 
 ---
 
@@ -69,8 +73,8 @@ We focus on:
 ### Clone / Open
 
 ```bash
-git clone <your-fork-or-demo-repo-url> demo-copilot-workshop
-cd demo-copilot-workshop
+git clone <your-fork-or-demo-repo-url> demo_copilot_agent
+cd demo_copilot_agent
 npm install
 ```
 
@@ -86,8 +90,7 @@ npm run build --workspace=frontend
 1. Open repo → **Code** → **Codespaces** → Create.  
 2. Wait for install; open Copilot Chat (sidebar).  
 3. Mark ports **Public**: API (3000), Frontend (e.g., 5137).  
-4. (Optional) Switch to Insiders for preview features.  
-5. Browser-based Codespaces = no interactive playwright UI; generation-only.
+4. Browser-based Codespaces = no interactive playwright UI; generation-only.
 
 > 🌀 Tip: If something feels slow, *close unused panels*—Agent logs can be chatty.
 
@@ -97,12 +100,10 @@ npm run build --workspace=frontend
 
 | Area | Folder | What To Notice |
 |------|--------|----------------|
-| API | `api/` | Repos, routes, models, migrations |
+| API | `api/` | Routes, models, migrations |
 | Frontend | `frontend/` | React + Vite + basic product tiles |
 | Infra | `infra/` | Deployment script scaffolding |
-| Docs | `docs/` | Reference & (now) this workshop guide |
-
-> 🎤 Facilitator Prompt: “Find one file you *think* we’ll modify today. Keep it in mind.”
+| Docs | `docs/` | Reference documentation & this workshop guide |
 
 ---
 
@@ -110,30 +111,50 @@ npm run build --workspace=frontend
 
 | Mode | Use When | Example |
 |------|----------|---------|
-| Inline | You know what to write; want speed | Autocomplete helper |
+| Code Completion | You know what to write; want speed | Autocomplete helper |
+| Inline Chat | Quick questions while in a section of code | Quick fix or clarification |
 | Ask | Need an explanation/Q&A | “Explain this repo layout.” |
-| Plan | Want structured steps before changing code | “Plan adding a Cart page.” |
+| Edit | Multi-file changes without looping | “Update this variable name to be ...” |
+| Custom Mode (Plan) | Want structured steps before changing code | “Plan adding a Cart page.” |
 | Agent | Ready to execute multi-step changes/tests | “Implement the Cart plan.” |
 | Custom Prompt | Repeatable workflow | Re-run coverage improvement |
 | MCP | Extend with external capabilities | Browser test, GitHub ops |
 
-> 🧩 Mini-Exercise (3 min): In pairs, map a real task you do weekly to the best mode.
+> 🧩 Mini-Exercise: Map a real task you do weekly to the best mode.
 
 ---
 
 ## ✅ First Win: Safe Agent Task (Module 2)
 
-**Goal:** Add a harmless log line via Agent Mode to build trust.
+**Goal:** Introduce Agent Mode.  Add a harmless log line via Agent Mode to build trust.
 
-Prompt (Agent Mode):
+In chat, switch to Agent mode and enter the following prompt:
 
 ```text
 Add a console log at the start of the suppliers GET route indicating how many suppliers are returned.
 ```
 
-**Flow:** Review diff → Accept → Build API → (Optional) run & hit endpoint.
+* Review the diff of proposed changes
+* Run the API to verify the changes haven't broken anything.  
 
-> 🎯 Debrief: “What *reassured* you? What *still* feels risky?”
+```bash
+npm run dev --workspace=api
+```
+
+* In a new terminal, hit the endpoint.  Return to the first terminal to see the log.
+
+```bash
+curl http://localhost:3000/api/supplier
+```
+
+You should see a log line like `[Suppliers GET] Returning 3 suppliers` in your `npm run dev` terminal.
+
+* If satisfied, click `Keep` to accept the changes.  
+
+
+> 🎯 Debrief: “This is the basic workflow for using Agent Mode.  It generates code, you iterate, review, and accept (or discard)”
+
+        * Agent mode gives the ability to execute in a loop, first understanding your request, looking for relevant context in your codebase, proposing code, and the ability to execute commands to execute tests and validate work.  
 
 **Badge Unlocked:** 🟩 *Agent Initiated*
 
@@ -141,44 +162,39 @@ Add a console log at the start of the suppliers GET route indicating how many su
 
 ## 🛒 Feature Build: Cart (Module 4)
 
-**Scenario:** Product listing exists, but no cart. We’ll add: Cart page, NavBar badge, add/remove, subtotal.
+**Scenario:** This is a more advanced usage of agent mode where we will create a new feature.  The product listing exists in this application, but no shopping cart. We’ll add: Cart page, NavBar badge, add/remove capability, and subtotal.
 
-### Path A (Beginner Friendly – Guided Prompt File)
-
-If a prompt file (e.g., `demo-cart-page.prompt.md`) exists:
-
-1. Open it → skim frontmatter.
-2. Run it in Agent Mode.
-3. Verify:
-   - New component(s)
-   - State wiring
-   - Navigation entry
-
-### Path B (Creative Build – Vision Assist)
-
-1. Open Plan Mode.
-2. Attach `docs/design/cart.png` (if available).
-3. Prompt:
+* Clear your previous chat history (`+` icon in the top of the chat panel)
+* Change from `Agent` mode to `Plan` mode
+  Plan mode is a custom mode that we have created.  Custom modes influence the prompt that you send.  It allows for more structured planning before implementation.  If interested, take a look at the custom mode file in `.github/chatmodes/Plan.chatmode.md`
+* Attach `docs/design/cart.png`.  This allows Copilot with Vision mode to see the design we want to implement.  (You can drag and drop the file into the chat panel)
+* Prompt to create a plan for implementing the cart page:
 
 ```text
 Plan minimal steps to add a Cart page matching image: routing, NavBar badge w/ item count, state mgmt, add/remove interactions. Output numbered steps.
 ```
 
-1. Switch to Agent Mode:
+* Switch to Agent Mode for execution.  Also switch the model being used to `Claude Sonnet 4`.  GPT-4.1 and Claude Sonnet 4 perform similarly.  However, Claude Sonnet 4 is likely to continue iterating on a problem longer without additional prompting.  Prompt as follows:
 
 ```text
 Implement the plan you just produced.
 ```
 
-1. Run frontend:
+This should iterate thought the steps of producing the cart page.  You may need to prompt a few times if it stops early.  Once complete you can run and test the application:
 
 ```bash
-npm run dev --workspace=frontend
+npm run dev
 ```
 
-1. Interact: Add items → badge updates → open cart page.
+* Open the preview (in Codespaces) or connect to localhost if running locally.  Go to the product page, add some items, and see the cart badge update with the item count.  Open the cart page to see the contents you've added.
 
-> 💬 Reflection Prompt: “Did Agent over-build anything? If yes, how would you constrain next time?”
+If you are happy with the changes, click `Keep` to accept the changes.  If not, feel free to iterate with further prompting to get the desired result.
+
+> 💬 Reflection Prompt: “Did Agent complete everything or did it need some prompting?  Different models iterate differently, but you can always change models at any time.”
+
+Rather than freeform prompting, you can use a prompt files in agent mode to execute tasks.  We will cover that in the next module.  If interested, you can review a prompt file created for this module which would implement the feature: `.github/prompts/demo-cart-page.prompt.md`.
+
+> 🎯 Debrief: “The benefit of agent mode is it can run in a loop as well as execute commands and interact with your terminal.  This allows Copilot to not only write the code, but also run the app and verify it starts correctly.”
 
 **Badge Unlocked:** 🟦 *Multi-File Change Navigator*
 
@@ -186,59 +202,166 @@ npm run dev --workspace=frontend
 
 ## 🧪 Testing & Self-Healing (Module 5)
 
-**Goal:** Improve coverage + watch Agent iterate.
+**Scenario:** You have walked through freeform prompting with agent mode.  This module will use a prompt file instead.  Prompt files give the ability to execute the same prompt multiple times (reusability).  It also gives a documented prompt for implementation for a single use.  In this module we will improve test coverage of the API routes.
 
-### Option 1: Use Coverage Prompt
+* Clear your previous chat history (`+` icon in the top of the chat panel)
+* Ensure you are in `Agent` mode and select the `Claude Sonnet 4` model
+* Review the existing prompt file: `.github/prompts/demo-unit-test-coverage.prompt.md`
+* Execute the prompt doing one of the following:
+  * With the prompt file open in your IDE, click the play button in the top right of the editor window
+  * Open the command palette (Cmd/Ctrl + Shift + P), select `Chat: Run Prompt...`, and select the prompt file
+  * In the chat panel type `/demo-unit-test-coverage`.  The name of the prompt file is a shortcut to run it.
 
-```text
-Analyze current API route test coverage. Add tests for error and validation edge cases. Run tests and summarize coverage delta.
-```
+A few notes on this run:
+* You will likely get prompted to run a command to execute tests.  This is expected.  Copilot requires approval for the commands it runs.  There are ways to auto-approve for trusted prompts, but we want to be cautious.
+* When executing tests, Copilot agent mode cannot continue until the terminal command completes.  You will likely need to press `q` in the terminal to exit the coverage report and return to the prompt.  We could improve our prompting to avoid this.
+* If using GPT 4.1 it will likely stop and ask if you'd like it to do more.  Claude is more likely to just work to completion.  
 
-### Option 2: Custom Prompt File (if provided)
-
-Run `demo-unit-test-coverage.prompt.md`.
-
-Then manually run:
+If you want to test coverage yourself you can run:
 
 ```bash
-cd api
-npm test
+npm run test:coverage --workspace=api
 ```
 
-If failure occurs, ask:
+* If you are happy with the changes, click `Keep` to accept the changes.  If not, feel free to switch to freeform prompting to iterate to get the desired result.
 
-```text
-Explain why test X failed. Propose minimal fix; then apply and re-run only affected tests.
-```
+> 🛠️ Prompt files help build reusability and document features as you build.  Freeform prompting is better when the outcome is less known or to iterate to finish up a task.
 
-> 🛠️ Encourage accepting *partial* value—don’t chase 100% blindly.
+> 🎯 Using `Plan` mode or just having Copilot build a plan allows you to see up front what Copilot will be doing.  This allows you to iterate on that plan interactively with Copilot and improves the chances of success when you ask it to implement (via prompt file or freeform).  
+
 
 **Badge Unlocked:** 🟨 *Confident Test Driver*
 
 ---
 
-## 🗂️ Custom Prompts & Handoffs (Module 6)
+## 🗂️ Context and Custom Prompts (Module 6)
 
-**Why:** Consistency & team acceleration.
+**Why:** If you don't have context of the application or an enterprises standards, you are unlikely to write code successfully the first time.  Copilot is no different.  Providing this context helps with consistency & team acceleration.  Examples of context include:
 
-Exercise:
+- Application architecture (e.g., microservices, monolith)
+- Team conventions (e.g., folder structure, naming conventions)
+- Business logic (e.g., user roles, permissions)
+- Standards (e.g., security, observability)
+- Internal tools (e.g., custom libraries, frameworks, APIs)
 
-1. Use Plan Mode for a “Profile Page” skeleton.
-2. Run a handoff prompt (e.g., `/handoff`).
-3. Inspect generated summary file.
-4. Agent Mode prompt:
+A typical way to add context is to drag and drop files or folders into the chat window.  However, that takes manual effort and isn't possible when agents are executing.  Beyond that, we will focus on two ways to provide context:
+1. **Custom Instructions**: These are global to your Copilot experience meaning they get included with every chat interaction.  They are a great way to provide high level context to inform Copilot of your application, team, standards, and other information that isn't public knowledge.
+2. **Handoff files**: These can be created via prompt file to provide context for your chat session.  They are task-specific and are a great way to transfer key points to a new chat window, handoff to another developer, or handoff to an agent.  
 
-```text
-Implement only the skeleton defined in handoff.md—no styling yet. Stop after creating components and routes.
+### Custom Instructions
+
+Custom Instructions can be stored in a file in your repo so that anyone working in the repo has the same context.  The file is `.github/copilot/custom-instructions.md`.  You can also set them globally in your Copilot settings, but that is per user and not shared.  The file is markdown so the format is flexible.  In this scenario we will add a custom instruction to inform Copilot of our observability standards using a fictitious example.
+
+* Examine the existing custom instructions in `.github/copilot/custom-instructions.md`
+* Review `docs/tao.md` to understand our observability framework.
+* Add the following section to the `custom-instructions.md` file:
+```markdown
+# Additional Guidelines for REST APIs
+
+For REST APIs, use the following guidelines:
+
+* Use descriptive naming
+* Add Swagger docs for all API methods
+* Implement logging and monitoring using [TAO](../docs/tao.md)
+  - assume TAO is installed and never add the package
 ```
 
-> 🔍 Discussion: “How does a handoff file reduce context noise?”
+* Clear your previous chat history (`+` icon in the top of the chat panel)
+* Ensure you are in `Agent` mode and select the `Claude Sonnet 4`
+* Prompt Copilot to add observability to the suppliers route: 
+```text
+Add observability to the Supplier route using our internal standards
+```
+* Review the proposed changes.  You should see it has added logging, metrics, and tracing to the route.
+* As this is a fictitious example, you can choose `Discard` to not keep the changes.
+* Clean up your custom instructions by removing the section you added.
 
-**Badge Unlocked:** 🟪 *Workflow Systematizer*
+Note that beyond the global instructions file you can also create path-specific instructions by adding several files in .github/instructions/NAME.instructions.md.  For example, only apply these instructions to typescript files (*.ts, *.tsx).  See the [documentation](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions) for more details.
+
+### Handoff Files
+
+Sometimes your chat gets a bit long and reduces performance.  Other times you want to handoff to a teammate or start a new chat session.  Handoff files are a great way to compress the context of your chat into a markdown file that can be shared or re-ingested into a new chat session.
+
+To facilitate this, we have created a prompt file `.github/prompts/handoff.prompt.md` that will generate a handoff file for a planned feature to implement a profile page.  
+
+* Clear your previous chat history (`+` icon in the top of the chat panel)
+* Ensure you are in `Plan` mode and prompt as follows:
+```text
+Create a plan for steps needed to add a profile page with user details, edit capability, and profile picture upload.
+```
+* Run a handoff prompt by using a slash command in the chat:
+```text
+/handoff
+```
+* Inspect generated summary file.  Note you could take this to a new chat session, hand it off to a teammate, or add it as an issue for coding agent to pick up. 
+* If interested in implementing directly, just ask:
+```text
+Implement only the skeleton defined in handoff markdown.  No styling yet. Stop after creating components and routes.
+```
+
+> 🔍 Outcome: “Custom instructions allows teams to encode their specific practices, internal libraries, and coding standards.  Handoff files can summarize chats and enable passing context onto another.  The handoff prompt could also be instructed to write to a prompt file for execution”
+
+**Badge Unlocked:** 🟪 *Context King*
 
 ---
 
-## 🛡️ Optional Track A: Security & Observability (Module 7A)
+## 🤖 Coding Agent & Code Review Agent (Module 7)
+
+**Scenario:** Agent mode is great, but it's not always fun to watch the agent run.  You have better things to do!  You want to delegate coding of a new feature or bug fix to Copilot while you focus on higher-value work.  Coding agent allows you to do this by creating an issue with a prompt that Copilot can pick up and implement.  Once done, code review agent allows you to have Copilot review the code changes and suggest improvements.
+
+Here we are going to use a prompt file from our cart page implementation to show how this could be created by coding agent asynchronously.
+
+* Open the file `.github/prompts/demo-cart-page.prompt.md` and review the prompt.  
+* Copy the contents of the prompt file to your clipboard.
+* Go to your GitHub repo and create a new issue.  Title it `YOUR USERNAME: Implement Cart Page` and paste the prompt file contents into the issue body.  
+* Save the issue
+* Assign the issue to `Copilot`.  This will assign the issue to coding agent.
+* Scroll down to the bottom and you should see a pair of eyes in the comments section.  This indicates coding agent has picked up the issue and is working on it.
+* You should see a link to the draft pull request.  Click on it to see the progress.  Note you can click on `View session` to see step-by-stem progress during execution.  This can also be used after the fact to see what the agent did.  
+* Once it has completed the pull request it will assign you to review changes.  
+* Here we will assign Copilot to review the changes.  Typically you wouldn't have a developer review their own code, but in the case of Copilot the review is with a different perspective and it doesn't have any bias or knowledge of what it wrote.  
+  * In the upper right under `Reviewers`, click on the gear and select `Copilot`.
+* Once copilot reviews the code you can see its feedback and suggested changes.  You can choose to accept or reject the changes. 
+* If you want the agent to do additional work, just add a comment and at-mention Copilot: `@Copilot can you implement the code review changes?`
+
+> 🔍 Outcome: “Coding agent allows you to assign tasks to Copilot to work asynchronously instead of watching it execute in the IDE.  This frees up your time - just assign your work to Copilot and take a coffee break.  You deserve it!”
+
+> 🔍 Outcome: “Code review agent provides reviews of any human or AI generated code.  It can be auto-assigned to review all pull requests and gives a simple and quick first pass to identify any issues”
+
+> 🚀 Want more time with coding agent?  Check out .github/prompts/demo-cca-parallel.prompt.md for an example using Copilot to expiriment on 3 different variations of a Cart page.  Running this requires GitHub Remote MCP server to be running (.vscode/mcp.json) and takes about 20 minutes to complete.  
+
+---
+
+## 🎯 Prompt Refinement (Module 8)
+
+**Goal:** Improve your ability to write clear, actionable prompts that lead to high-quality results.  The quality of AI-generated code is heavily influenced by the clarity and specificity of your prompts. Vague or ambiguous prompts can lead to suboptimal outcomes, requiring more iterations and corrections. Copilot can help by providing suggestions and improvements to your prompts. 
+
+* Review the Refine Prompt Chat mode file: `.github/chatmodes/RefinePrompt.chatmode.md`
+* Clear your previous chat history (`+` icon in the top of the chat panel)
+* Switch to `RefinePrompt` chat mode
+* Enter a vague prompt: `Add a cart page`
+  * You should get some clarifying questions and a low clarity score
+* Ask for assistance: `Critique this prompt. What’s missing? Provide an improved version.`
+* Alternatively you can create a more detailed prompt yourself and ask for review:
+  * Attach the cart image `docs/design/cart.png` to provide context
+  * Enter a more detailed prompt.  For example:
+```text
+I want a cart Page that shows the items in the cart currently using the attached image for design elements. Match dark/light modes. Show a shipping fee of $25 but free for orders over $150. Add a cart icon to the NavBar that shows the number of items in the cart and updates when items are added/removed. When the icon is clicked, navigate to the Cart page.
+```
+* Note the higher clarity score.  
+
+Checklist for a Prompt:
+
+- Context (what exists and is relevant) ✅
+- Outcome (what good looks like) ✅
+- Constraints (don’t over-build) ✅
+- Edge Cases (empty cart, duplicate adds) ✅
+
+**Badge Unlocked:** 🟥 *Prompt Architect*
+
+---
+
+## 🛡️ Optional Track A: Security & Observability (Module 9A)
 
 Prompts:
 
@@ -256,7 +379,7 @@ Generate a safe patch for the highest priority issue. Explain risk before showin
 
 ---
 
-## 🌐 Optional Track B: MCP & Browser (Module 7B)
+## 🌐 Optional Track B: MCP & Browser (Module 9B)
 
 Local environment recommended (Playwright MCP).
 
@@ -273,25 +396,6 @@ Create a BDD feature file testing adding two products to the cart and verifying 
 
 ---
 
-## 🎯 Prompt Refinement (Module 8)
-
-Exercise:
-
-1. Enter vague prompt: `Add a cart page`.
-1. Ask: `Critique this prompt. What’s missing? Provide an improved version.`
-1. Submit improved version.
-
-Checklist for Upgrade:
-
-- Context (what exists) ✅
-- Outcome (what good looks like) ✅
-- Constraints (don’t over-build) ✅
-- Edge Cases (empty cart, duplicate adds) ✅
-
-**Badge Unlocked:** 🟥 *Prompt Architect*
-
----
-
 ## 🚑 Troubleshooting Matrix
 
 | Symptom | Likely Cause | Fast Fix |
@@ -301,21 +405,7 @@ Checklist for Upgrade:
 | Badge not updating | State not wired to context/provider | Inspect component diff; re-prompt with constraint |
 | Agent stalls mid-plan | Overly vague / no actionable steps | Re-run in Plan Mode first |
 | Repeated test failure | Flaky assumption in test logic | Ask Agent to stabilize with deterministic input |
-| Playwright MCP unavailable | Running in web Codespace | Explain limitation; generate only |
-
----
-
-## 🧬 Engagement Mechanics (Use As Needed)
-
-| Mechanic | When | Purpose |
-|----------|------|---------|
-| Badges | Module completion | Motivation |
-| Pair & Swap | After Module 4 | Shared learning |
-| “Prompt Roast” | Refinement session | Improve clarity |
-| Live Poll (“Who feels in control?”) | Mid-point | Gauge confidence |
-| Time Boxing (10-min sprint) | Test module | Maintain momentum |
-
-> 💡 Tip: Celebrate *first small success*, not perfection.
+| Playwright MCP unavailable | Running in web Codespace | headless - limited to generating only |
 
 ---
 
@@ -329,20 +419,6 @@ Checklist for Upgrade:
 | Self-Healing | Agent fixes after a failing test run |
 | Handoff | Compressed summary for continuation or teammate |
 | Coverage | % of code executed by tests |
-
----
-
-## 🧑‍🏫 Facilitator Playbook
-
-| Phase | Do This | Why |
-|-------|---------|-----|
-| Before | Pre-run all prompts; cache deps | Avoid cold-start delays |
-| Kickoff | Show a *bad* prompt then a refined one | Sets tone for craft |
-| Midpoint | Ask for 1 word describing experience | Surface friction |
-| Struggle Moments | Encourage rephrasing over abandoning | Teaches steering |
-| Wrap | Recap badges earned | Reinforces achievement |
-
-**Energy Intervention Ideas:** quick stretch, rotate pairs, “prompt lightning round.”
 
 ---
 
@@ -387,12 +463,6 @@ Checklist for Upgrade:
 - Internal engineering standards (add links)
 - Security hardening checklist (org resource)
 - Prompt crafting cheatsheet (to create next!)
-
----
-
-## ✅ License & Adaptation
-
-Fork, adapt, remix. Keep a CHANGELOG so improvements compound.
 
 ---
 

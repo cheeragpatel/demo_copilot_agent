@@ -1,20 +1,11 @@
 
-# 🚀 OctoCAT Supply: The Ultimate GitHub Copilot Demo <$ source.version $>
+# 🚀 OctoCAT Supply: The Ultimate GitHub Copilot Workshop 
 
 ![OctoCAT Supply](./frontend/public/hero.png)
 
-Welcome to the OctoCAT Supply Website - your go-to demo for showcasing the incredible capabilities of GitHub Copilot, GHAS, and the power of AI-assisted development!
+Welcome to the OctoCAT Supply Website - your go-to demo for learning the incredible capabilities of GitHub Copilot, GHAS, and the power of AI-assisted development!
 
-## ✨ What Makes This Demo Special
-
-This isn't just another demo app - it's a carefully crafted showcase that demonstrates the full spectrum of GitHub's AI capabilities:
-
-- 🤖 **Copilot Agent Mode & Vision** - Watch Copilot understand UI designs and implement complex features across multiple files
-- 🎭 **MCP Server Integration** - Demonstrate extended capabilities with Playwright for testing and GitHub API integration
-- 🛡️ **Security First** - Showcase GHAS scanning and Copilot-powered vulnerability fixes
-- 🧪 **Test Generation** - Exhibit Copilot's ability to analyze coverage and generate meaningful tests
-- 🔄 **CI/CD & IaC** - Generate deployment workflows and infrastructure code with natural language
-- 🎯 **Custom Instructions** - Show how Copilot can be tailored to understand internal frameworks and standards
+Go to the [Workshop Guide](./docs/workshop-agent-mode.md) for a step-by-step learning path.
 
 ## 🏗️ Architecture
 
@@ -37,7 +28,7 @@ erDiagram
 - **Data**: SQLite (file db at `api/data/app.db`; in-memory for tests)
 - **DevOps**: Docker
 
-## 🎯 Key Demo Scenarios
+## 🎯 Key Scenarios
 
 1. **Vibe Coding**
    - Implement a shopping cart from a design mockup
@@ -110,13 +101,6 @@ Database defaults and env vars:
 - DB file: `api/data/app.db` (override with `DB_FILE=/absolute/path/to/file.db`)
 - Enable WAL: `DB_ENABLE_WAL=true` (default)
 - Foreign keys: `DB_FOREIGN_KEYS=true` (default)
-
-## 🎓 Pro Tips for Solution Engineers
-
-- Practice the demos before customer presentations
-- Remember Copilot is non-deterministic - be ready to adapt
-- Mix and match demo scenarios based on your audience
-- Keep your GitHub PAT handy for MCP demos
 
 ---
 
