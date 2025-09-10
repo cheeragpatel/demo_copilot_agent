@@ -71,8 +71,16 @@ export function handleDatabaseError(error: any, entity?: string, id?: string | n
 
 /**
  * Express error handler middleware for database errors
+ * Reference: OWASP A09, Secure Coding Instructions 9
  */
 export function errorHandler(error: any, req: any, res: any, next: any) {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  // Log the full error for debugging (in production, this should go to a secure log)
+  if (!isProduction) {
+    console.error('Error details:', error);
+  }
+
   if (error instanceof DatabaseError) {
     return res.status(error.statusCode).json({
       error: {
@@ -82,11 +90,25 @@ export function errorHandler(error: any, req: any, res: any, next: any) {
     });
   }
 
-  // Default error handling
+  // Validation errors from express-validator
+  if (error.name === 'ValidationError') {
+    return res.status(400).json({
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'Request validation failed',
+      },
+    });
+  }
+
+  // Don't leak internal error details in production
+  const message = isProduction 
+    ? 'An unexpected error occurred' 
+    : `Internal error: ${error.message}`;
+
   return res.status(500).json({
     error: {
-      code: 'INTERNAL_ERROR',
-      message: 'An unexpected error occurred',
+      code: 'INTERNAL_ERROR', 
+      message,
     },
   });
 }

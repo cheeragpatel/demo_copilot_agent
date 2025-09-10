@@ -94,6 +94,29 @@ CREATE TABLE order_detail_deliveries (
     FOREIGN KEY (delivery_id) REFERENCES deliveries(delivery_id) ON DELETE CASCADE
 );
 
+-- Create users table for authentication - Reference: OWASP A07, Secure Coding Instructions 7
+CREATE TABLE users (
+    user_id INTEGER PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    is_admin BOOLEAN NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    last_login TEXT,
+    failed_login_attempts INTEGER NOT NULL DEFAULT 0,
+    locked_until TEXT
+);
+
+-- Create sessions table for session management
+CREATE TABLE sessions (
+    session_id TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    expires_at TEXT NOT NULL,
+    ip_address TEXT,
+    user_agent TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
 -- Create indexes for better performance
 CREATE INDEX idx_branches_headquarters_id ON branches(headquarters_id);
 CREATE INDEX idx_products_supplier_id ON products(supplier_id);
@@ -106,3 +129,6 @@ CREATE INDEX idx_deliveries_supplier_id ON deliveries(supplier_id);
 CREATE INDEX idx_deliveries_status ON deliveries(status);
 CREATE INDEX idx_order_detail_deliveries_order_detail_id ON order_detail_deliveries(order_detail_id);
 CREATE INDEX idx_order_detail_deliveries_delivery_id ON order_detail_deliveries(delivery_id);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_sessions_user_id ON sessions(user_id);
+CREATE INDEX idx_sessions_expires_at ON sessions(expires_at);
