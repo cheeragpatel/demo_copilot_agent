@@ -99,15 +99,16 @@
  *         description: Product not found
  */
 
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { Product } from '../models/product';
 import { getProductsRepository } from '../repositories/productsRepo';
 import { handleDatabaseError, NotFoundError } from '../utils/errors';
+import { validationRules, handleValidationErrors } from '../utils/validation';
 
 const router = express.Router();
 
 // Create a new product
-router.post('/', async (req, res, next) => {
+router.post('/', validationRules.product, handleValidationErrors, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repo = await getProductsRepository();
     const newProduct = await repo.create(req.body as Omit<Product, 'productId'>);
@@ -129,14 +130,14 @@ router.get('/', async (req, res, next) => {
 });
 
 // Get a product by ID
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', validationRules.idParam, handleValidationErrors, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repo = await getProductsRepository();
     const product = await repo.findById(parseInt(req.params.id));
     if (product) {
       res.json(product);
     } else {
-      res.status(404).send('Product not found');
+      res.status(404).json({ error: 'Product not found' });
     }
   } catch (error) {
     next(error);
@@ -144,14 +145,14 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // Update a product by ID
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', validationRules.idParam, validationRules.product, handleValidationErrors, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repo = await getProductsRepository();
     const updatedProduct = await repo.update(parseInt(req.params.id), req.body);
     res.json(updatedProduct);
   } catch (error) {
     if (error instanceof NotFoundError) {
-      res.status(404).send('Product not found');
+      res.status(404).json({ error: 'Product not found' });
     } else {
       next(error);
     }
@@ -159,14 +160,14 @@ router.put('/:id', async (req, res, next) => {
 });
 
 // Delete a product by ID
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', validationRules.idParam, handleValidationErrors, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const repo = await getProductsRepository();
     await repo.delete(parseInt(req.params.id));
     res.status(204).send();
   } catch (error) {
     if (error instanceof NotFoundError) {
-      res.status(404).send('Product not found');
+      res.status(404).json({ error: 'Product not found' });
     } else {
       next(error);
     }

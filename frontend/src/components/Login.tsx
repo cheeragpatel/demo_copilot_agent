@@ -21,11 +21,12 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     try {
       await login(email, password);
       navigate('/');
-    } catch {
-      setError('Login failed. Please try again.');
+    } catch (error: any) {
+      setError(error.message || 'Login failed. Please try again.');
     }
   };
 
@@ -43,10 +44,9 @@ export default function Login() {
         </h2>
 
         {error && (
-          <div
-            className="bg-red-500/10 border border-red-500 text-red-500 rounded-md p-3 mb-4"
-            dangerouslySetInnerHTML={{ __html: error }}
-          />
+          <div className="bg-red-500/10 border border-red-500 text-red-500 rounded-md p-3 mb-4">
+            {error}
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
