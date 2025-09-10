@@ -144,7 +144,7 @@ npm run dev --workspace=api
 * In a new terminal, hit the endpoint.  Return to the first terminal to see the log.
 
 ```bash
-curl http://localhost:3000/api/supplier
+curl http://localhost:3000/api/suppliers
 ```
 
 You should see a log line like `[Suppliers GET] Returning 3 suppliers` in your `npm run dev` terminal.
