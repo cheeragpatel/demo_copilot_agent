@@ -1,0 +1,150 @@
+# OctoCAT Supply Chain Management - High-Level Architecture
+
+This document provides a high-level architectural overview of the OctoCAT Supply Chain Management System, illustrating the separation of concerns across the presentation, business logic, and data layers.
+
+## System Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        U[👤 Users]
+        B[🌐 Web Browser]
+    end
+    
+    subgraph "Presentation Layer"
+        subgraph "Frontend (React SPA)"
+            R[⚛️ React Components]
+            V[🏗️ Vite Build Tool]
+            T[🎨 Tailwind CSS]
+            TS[📝 TypeScript]
+        end
+    end
+    
+    subgraph "Application Layer"
+        subgraph "Backend API (Express.js)"
+            API[🚀 Express.js Server]
+            Routes[🛤️ REST Routes]
+            Models[📦 Entity Models]
+            Repos[📚 Repository Layer]
+            OpenAPI[📋 OpenAPI/Swagger]
+            TAO[📊 TAO Observability]
+        end
+    end
+    
+    subgraph "Data Layer"
+        DB[(🗃️ SQLite Database)]
+        Migrations[⚙️ Schema Migrations]
+        Seeds[🌱 Seed Data]
+    end
+    
+    %% User interactions
+    U --> B
+    B <--> R
+    
+    %% Frontend internal dependencies
+    R --> TS
+    R --> T
+    V --> R
+    
+    %% Frontend to Backend communication
+    R -.->|HTTPS REST API| API
+    
+    %% Backend internal flow
+    API --> Routes
+    Routes --> Models
+    Models --> Repos
+    API --> OpenAPI
+    API --> TAO
+    
+    %% Data access
+    Repos <--> DB
+    Migrations --> DB
+    Seeds --> DB
+    
+    %% Styling
+    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef backend fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef data fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef user fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    
+    class R,V,T,TS frontend
+    class API,Routes,Models,Repos,OpenAPI,TAO backend
+    class DB,Migrations,Seeds data
+    class U,B user
+```
+
+## Architecture Components
+
+### Frontend Layer (React/Vite/Tailwind)
+- **React 18+**: Modern component-based UI framework with TypeScript
+- **Vite**: Fast build tool and development server for optimal developer experience
+- **Tailwind CSS**: Utility-first CSS framework for responsive and consistent styling
+- **TypeScript**: Type-safe JavaScript for better maintainability and developer experience
+
+### Backend Layer (Express.js API)
+- **Express.js**: Node.js web framework serving RESTful API endpoints
+- **OpenAPI/Swagger**: API documentation and specification
+- **Repository Pattern**: Data access abstraction layer for clean separation of concerns
+- **Entity Models**: Business logic and data models with proper relationships
+- **TAO Observability**: Custom observability framework for metrics, tracing, and logging
+
+### Data Layer (SQLite)
+- **SQLite Database**: Lightweight, file-based relational database
+- **Schema Migrations**: Version-controlled database schema changes
+- **Seed Data**: Deterministic test and demo data population
+
+## Communication Flow
+
+1. **User Interaction**: Users interact with the React frontend through web browsers
+2. **API Communication**: Frontend makes HTTPS REST API calls to the Express.js backend
+3. **Data Processing**: Backend processes requests through routes, models, and repositories
+4. **Data Persistence**: Repository layer executes SQL queries against SQLite database
+5. **Response Flow**: Data flows back through the same layers to the user interface
+
+## Security Best Practices
+
+### 🔒 Production Security Requirements
+
+**CRITICAL**: Always use HTTPS in production environments to ensure encrypted communication between the frontend and backend. Never deploy with HTTP in production.
+
+**SECRET MANAGEMENT**: Never hardcode secrets, API keys, passwords, or sensitive configuration values in source code. Use environment variables or secure secret management services.
+
+**PRINCIPLE OF LEAST PRIVILEGE**: Implement the principle of least privilege for all API endpoints:
+- Validate and sanitize all input data
+- Implement proper authentication and authorization
+- Limit API access to only necessary operations
+- Use role-based access control where applicable
+
+### 🛡️ Security Standards Reference
+
+For comprehensive security guidelines, refer to the security instructions and standards documentation in your organization's security space. Key areas to focus on include:
+
+- Input validation and sanitization
+- Authentication and session management  
+- Authorization and access control
+- Data encryption at rest and in transit
+- Secure error handling and logging
+- Regular security assessments and updates
+
+### 🔍 Security Monitoring
+
+The TAO observability framework provides security monitoring capabilities:
+- Request logging and audit trails
+- Performance metrics and anomaly detection
+- Error tracking and security event logging
+- Distributed tracing for request flow analysis
+
+## Deployment Considerations
+
+- **Containerization**: Both frontend and backend are containerized using Docker
+- **Environment Configuration**: Runtime configuration supports different deployment environments
+- **Database**: SQLite provides simplicity for development and demonstration purposes
+- **Scalability**: Architecture supports horizontal scaling through container orchestration
+
+## Development Workflow
+
+1. **Local Development**: Use `npm run dev` to start both frontend and backend in development mode
+2. **Database Management**: Initialize with `npm run db:init --workspace=api` for migrations and seed data
+3. **Testing**: Run `npm run test:api` for backend unit tests
+4. **Building**: Use `npm run build` to create production-ready builds
+5. **Linting**: Ensure code quality with `npm run lint`
