@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useState } from 'react';
+import CartPillNavItem from './cart/CartPillNavItem';
 
 export default function Navigation() {
   const { isLoggedIn, isAdmin, logout } = useAuth();
@@ -45,6 +46,7 @@ export default function Navigation() {
               >
                 About us
               </Link>
+              <CartPillNavItem />
               {isAdmin && (
                 <div className="relative">
                   <button
