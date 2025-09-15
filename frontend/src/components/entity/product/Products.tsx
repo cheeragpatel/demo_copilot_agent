@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
+import { useCart } from '../../../context/CartContext';
+import { useCartUI } from '../../../hooks/useCartUI';
 
 interface Product {
   productId: number;
@@ -26,8 +28,13 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
+  const { addItem, getTotalItems } = useCart();
+  const { autoPeek } = useCartUI();
+
+  const currentCartItemCount = getTotalItems();
 
   const filteredProducts = products?.filter(
     (product) =>
@@ -45,12 +52,26 @@ export default function Products() {
   const handleAddToCart = (productId: number) => {
     const quantity = quantities[productId] || 0;
     if (quantity > 0) {
-      // TODO: Implement cart functionality
-      alert(`Added ${quantity} items to cart`);
-      setQuantities((prev) => ({
-        ...prev,
-        [productId]: 0,
-      }));
+      const product = products?.find(p => p.productId === productId);
+      if (product) {
+        const wasCartEmpty = currentCartItemCount === 0;
+        addItem(product, quantity);
+        
+        // Show toast notification
+        setToastMessage(`Added ${quantity} ${product.name} to cart`);
+        setTimeout(() => setToastMessage(null), 3000);
+        
+        // Auto-peek drawer if this was the first item
+        if (wasCartEmpty) {
+          autoPeek();
+        }
+        
+        // Reset quantity
+        setQuantities((prev) => ({
+          ...prev,
+          [productId]: 0,
+        }));
+      }
     }
   };
 
@@ -248,6 +269,20 @@ export default function Products() {
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-4 right-4 z-40">
+          <div className={`${darkMode ? 'bg-gray-800 text-light' : 'bg-white text-gray-800'} px-4 py-3 rounded-lg shadow-lg border ${darkMode ? 'border-gray-700' : 'border-gray-200'} animate-fade-in`}>
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="font-medium">{toastMessage}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Product Modal */}
       {showModal && selectedProduct && (

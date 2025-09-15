@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useCartUI } from '../hooks/useCartUI';
 import { useState } from 'react';
+import CartIconButton from './cart/CartIconButton';
 
 export default function Navigation() {
   const { isLoggedIn, isAdmin, logout } = useAuth();
   const { darkMode, toggleTheme } = useTheme();
+  const { openDrawer } = useCartUI();
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
 
   return (
@@ -85,6 +88,7 @@ export default function Navigation() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            <CartIconButton onClick={openDrawer} />
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full focus:outline-none transition-colors"
