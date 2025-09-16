@@ -12,4 +12,9 @@ export default defineConfig({
   define: {
     'process.env.CODESPACE_NAME': JSON.stringify(process.env.CODESPACE_NAME),
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: [],
+  },
 });
