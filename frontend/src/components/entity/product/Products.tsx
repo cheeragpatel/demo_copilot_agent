@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
+import { useCart } from '../../../context/CartContext';
 
 interface Product {
   productId: number;
@@ -28,6 +29,7 @@ export default function Products() {
   const [showModal, setShowModal] = useState(false);
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
+  const { addItem, getItemQuantity, openPanel } = useCart();
 
   const filteredProducts = products?.filter(
     (product) =>
@@ -44,13 +46,28 @@ export default function Products() {
 
   const handleAddToCart = (productId: number) => {
     const quantity = quantities[productId] || 0;
-    if (quantity > 0) {
-      // TODO: Implement cart functionality
-      alert(`Added ${quantity} items to cart`);
+    const product = products?.find(p => p.productId === productId);
+    
+    if (quantity > 0 && product) {
+      addItem({
+        productId: product.productId,
+        name: product.name,
+        price: product.price,
+        quantity: quantity,
+        imgName: product.imgName,
+        originalPrice: product.price,
+        discount: product.discount,
+        sku: product.sku,
+        unit: product.unit,
+      });
+      
       setQuantities((prev) => ({
         ...prev,
         [productId]: 0,
       }));
+      
+      // Open cart panel to show the item was added
+      setTimeout(() => openPanel(), 100);
     }
   };
 
@@ -241,6 +258,15 @@ export default function Products() {
                         Add to Cart
                       </button>
                     </div>
+                    
+                    {/* Show current cart quantity if item is in cart */}
+                    {getItemQuantity(product.productId) > 0 && (
+                      <div className="mt-2 text-center">
+                        <span className="text-sm text-primary font-medium">
+                          {getItemQuantity(product.productId)} in cart
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
