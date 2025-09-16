@@ -70,7 +70,11 @@ This workshop will start with 1 - 1.5 hours of instructor-led presentations and 
   - **OR** GitHub Codespace (recommended for uniformity).
 - (Optional Advanced): Azure CLI, GitHub CLI, local Chrome/Chromium (for MCP Playwright).
 
-### Clone / Open
+> ⚠️ **Important:** These next steps are only required if you are *not* in a pre‑configured Codespace.
+>
+> Follow them to prepare your local environment (install Node.js, Git, and VS Code; ensure ports are reachable). If you're inside a pre‑configured Codespace, you can safely skip this section.
+
+#### Clone / Open
 
 ```bash
 git clone <your-fork-or-demo-repo-url> demo_copilot_agent
@@ -78,7 +82,7 @@ cd demo_copilot_agent
 npm install
 ```
 
-### Build Sanity Check
+#### Build Sanity Check
 
 ```bash
 npm run build --workspace=api
@@ -250,11 +254,11 @@ A typical way to add context is to drag and drop files or folders into the chat 
 
 ### Custom Instructions
 
-Custom Instructions can be stored in a file in your repo so that anyone working in the repo has the same context.  The file is `.github/copilot/custom-instructions.md`.  You can also set them globally in your Copilot settings, but that is per user and not shared.  The file is markdown so the format is flexible.  In this scenario we will add a custom instruction to inform Copilot of our observability standards using a fictitious example.
+Custom Instructions can be stored in a file in your repo so that anyone working in the repo has the same context.  The file is `.github/copilot/copilot-instructions.md`.  You can also set them globally in your Copilot settings, but that is per user and not shared.  The file is markdown so the format is flexible.  In this scenario we will add a custom instruction to inform Copilot of our observability standards using a fictitious example.
 
-* Examine the existing custom instructions in `.github/copilot/custom-instructions.md`
+* Examine the existing custom instructions in `.github/copilot/copilot-instructions.md`
 * Review `docs/tao.md` to understand our observability framework.
-* Add the following section to the `custom-instructions.md` file:
+* Add the following section to the `copilot-instructions.md` file:
 ```markdown
 # Additional Guidelines for REST APIs
 
