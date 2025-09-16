@@ -3,18 +3,8 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
-
-interface Product {
-  productId: number;
-  name: string;
-  description: string;
-  price: number;
-  imgName: string;
-  sku: string;
-  unit: string;
-  supplierId: number;
-  discount?: number;
-}
+import { useCart } from '../../../context/CartContext';
+import { Product } from '../../../types/cart';
 
 const fetchProducts = async (): Promise<Product[]> => {
   const { data } = await axios.get(`${api.baseURL}${api.endpoints.products}`);
@@ -28,6 +18,7 @@ export default function Products() {
   const [showModal, setShowModal] = useState(false);
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
+  const { addItem } = useCart();
 
   const filteredProducts = products?.filter(
     (product) =>
@@ -42,15 +33,22 @@ export default function Products() {
     }));
   };
 
-  const handleAddToCart = (productId: number) => {
+  const handleAddToCart = async (productId: number) => {
     const quantity = quantities[productId] || 0;
     if (quantity > 0) {
-      // TODO: Implement cart functionality
-      alert(`Added ${quantity} items to cart`);
-      setQuantities((prev) => ({
-        ...prev,
-        [productId]: 0,
-      }));
+      const product = products?.find(p => p.productId === productId);
+      if (product) {
+        try {
+          await addItem(product, quantity);
+          setQuantities((prev) => ({
+            ...prev,
+            [productId]: 0,
+          }));
+        } catch (error) {
+          console.error('Failed to add item to cart:', error);
+          alert('Failed to add item to cart. Please try again.');
+        }
+      }
     }
   };
 
