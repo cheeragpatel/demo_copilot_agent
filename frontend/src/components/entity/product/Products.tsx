@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
+import { useCart } from '../../../context/CartContext';
 
 interface Product {
   productId: number;
@@ -26,8 +27,10 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [addedToCart, setAddedToCart] = useState<Record<number, boolean>>({});
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
+  const { addItem } = useCart();
 
   const filteredProducts = products?.filter(
     (product) =>
@@ -44,13 +47,23 @@ export default function Products() {
 
   const handleAddToCart = (productId: number) => {
     const quantity = quantities[productId] || 0;
-    if (quantity > 0) {
-      // TODO: Implement cart functionality
-      alert(`Added ${quantity} items to cart`);
-      setQuantities((prev) => ({
-        ...prev,
-        [productId]: 0,
-      }));
+    const product = products?.find(p => p.productId === productId);
+    
+    if (quantity > 0 && product) {
+      // Add to cart using context
+      addItem(product, quantity);
+      
+      // Show visual feedback
+      setAddedToCart(prev => ({ ...prev, [productId]: true }));
+      
+      // Reset quantity and feedback after brief delay
+      setTimeout(() => {
+        setQuantities((prev) => ({
+          ...prev,
+          [productId]: 0,
+        }));
+        setAddedToCart(prev => ({ ...prev, [productId]: false }));
+      }, 1000);
     }
   };
 
@@ -229,8 +242,10 @@ export default function Products() {
                       </div>
                       <button
                         onClick={() => handleAddToCart(product.productId)}
-                        className={`px-4 py-2 rounded-lg transition-colors ${
-                          quantities[product.productId]
+                        className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                          addedToCart[product.productId]
+                            ? 'bg-green-500 hover:bg-green-600 text-white'
+                            : quantities[product.productId]
                             ? 'bg-primary hover:bg-accent text-white'
                             : `${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'} cursor-not-allowed`
                         }`}
@@ -238,7 +253,16 @@ export default function Products() {
                         aria-label={`Add ${quantities[product.productId] || 0} ${product.name} to cart`}
                         id={`add-to-cart-${product.productId}`}
                       >
-                        Add to Cart
+                        {addedToCart[product.productId] ? (
+                          <span className="flex items-center">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            Added!
+                          </span>
+                        ) : (
+                          'Add to Cart'
+                        )}
                       </button>
                     </div>
                   </div>
