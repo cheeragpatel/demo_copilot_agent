@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useCart } from '../context/CartContext';
 import { useState } from 'react';
 
 export default function Navigation() {
   const { isLoggedIn, isAdmin, logout } = useAuth();
   const { darkMode, toggleTheme } = useTheme();
+  const { totalItems } = useCart();
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
 
   return (
@@ -85,6 +87,49 @@ export default function Navigation() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            {/* Floating Action Cart Button */}
+            <Link
+              to="/cart"
+              className="relative group"
+              aria-label={`Shopping cart with ${totalItems} items`}
+            >
+              <div className={`relative p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 hover:shadow-xl ${
+                darkMode 
+                  ? 'bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary' 
+                  : 'bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary'
+              }`}>
+                <svg
+                  className="w-6 h-6 text-white transition-transform duration-300 group-hover:scale-110"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5l2.5 5M17 8v13a2 2 0 01-2 2H9a2 2 0 01-2-2V8"
+                  />
+                </svg>
+                
+                {/* Animated Badge */}
+                {totalItems > 0 && (
+                  <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center shadow-lg animate-bounce">
+                    <span className="transform scale-90">
+                      {totalItems > 99 ? '99+' : totalItems}
+                    </span>
+                  </div>
+                )}
+                
+                {/* Floating effect */}
+                <div className={`absolute inset-0 rounded-full opacity-75 transition-all duration-300 ${
+                  darkMode 
+                    ? 'bg-gradient-to-r from-primary to-accent' 
+                    : 'bg-gradient-to-r from-primary to-accent'
+                } blur-lg transform scale-75 group-hover:scale-100 group-hover:opacity-50`} />
+              </div>
+            </Link>
+
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full focus:outline-none transition-colors"
