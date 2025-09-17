@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useCart } from '../context/CartContext';
 import { useState } from 'react';
 
 export default function Navigation() {
   const { isLoggedIn, isAdmin, logout } = useAuth();
   const { darkMode, toggleTheme } = useTheme();
+  const { totalItems, totalPrice, isAnimating } = useCart();
   const [adminMenuOpen, setAdminMenuOpen] = useState(false);
 
   return (
@@ -85,6 +87,50 @@ export default function Navigation() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            {/* Cart Icon with Badge */}
+            <Link to="/cart" className="relative group">
+              <div className={`p-2 rounded-full transition-colors duration-300 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+                <svg
+                  className={`w-6 h-6 transition-all duration-300 ${isAnimating ? 'scale-110' : 'scale-100'} ${darkMode ? 'text-light group-hover:text-primary' : 'text-gray-700 group-hover:text-primary'}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.5-1.5M7 13v6a2 2 0 002 2h6a2 2 0 002-2v-6"
+                  />
+                </svg>
+                {/* Badge */}
+                {totalItems > 0 && (
+                  <span
+                    className={`absolute -top-1 -right-1 bg-primary text-white text-xs font-bold rounded-full min-w-[1.25rem] h-5 flex items-center justify-center px-1 transition-all duration-300 ${isAnimating ? 'scale-125' : 'scale-100'}`}
+                  >
+                    {totalItems > 99 ? '99+' : totalItems}
+                  </span>
+                )}
+              </div>
+              
+              {/* Tooltip */}
+              {totalItems > 0 && (
+                <div className="absolute right-0 top-full mt-2 w-48 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
+                  <div className={`${darkMode ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'} border rounded-lg shadow-lg p-3 text-sm`}>
+                    <div className={`${darkMode ? 'text-light' : 'text-gray-800'} font-medium mb-1`}>
+                      {totalItems} {totalItems === 1 ? 'item' : 'items'} in cart
+                    </div>
+                    <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                      Total: ${totalPrice.toFixed(2)}
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+                      <span className="text-primary text-xs">Click to view cart</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Link>
+
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full focus:outline-none transition-colors"
