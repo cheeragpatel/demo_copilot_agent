@@ -143,4 +143,19 @@ describe('Product API', () => {
     const response = await request(app).delete('/products/999');
     expect(response.status).toBe(404);
   });
+
+  it('should handle database errors gracefully when creating with invalid foreign key', async () => {
+    const newProduct = {
+      supplierId: 999, // Non-existent supplier
+      name: 'Invalid Product',
+      description: 'This should fail',
+      price: 99.99,
+      sku: 'INV-001',
+      unit: 'piece',
+      imgName: 'invalid.jpg',
+      discount: 0.0,
+    };
+    const response = await request(app).post('/products').send(newProduct);
+    expect([400, 500]).toContain(response.status);
+  });
 });

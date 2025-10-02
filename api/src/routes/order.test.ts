@@ -132,4 +132,16 @@ describe('Order API', () => {
     const response = await request(app).delete('/orders/999');
     expect(response.status).toBe(404);
   });
+
+  it('should handle database errors gracefully when creating with invalid foreign key', async () => {
+    const newOrder = {
+      branchId: 999, // Non-existent branch
+      orderDate: '2024-01-15',
+      name: 'Invalid Order',
+      description: 'This should fail',
+      status: 'pending',
+    };
+    const response = await request(app).post('/orders').send(newOrder);
+    expect([400, 500]).toContain(response.status);
+  });
 });

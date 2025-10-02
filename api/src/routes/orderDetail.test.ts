@@ -143,4 +143,16 @@ describe('OrderDetail API', () => {
     const response = await request(app).delete('/order-details/999');
     expect(response.status).toBe(404);
   });
+
+  it('should handle database errors gracefully when creating with invalid foreign keys', async () => {
+    const newOrderDetail = {
+      orderId: 999, // Non-existent order
+      productId: 999, // Non-existent product
+      quantity: 10,
+      unitPrice: 99.99,
+      notes: 'Invalid',
+    };
+    const response = await request(app).post('/order-details').send(newOrderDetail);
+    expect([400, 500]).toContain(response.status);
+  });
 });

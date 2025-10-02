@@ -160,4 +160,17 @@ describe('OrderDetailDelivery API', () => {
     const response = await request(app).delete('/order-detail-deliveries/999');
     expect(response.status).toBe(404);
   });
+
+  it('should handle database errors gracefully when creating with invalid foreign keys', async () => {
+    const newOrderDetailDelivery = {
+      orderDetailId: 999, // Non-existent order detail
+      deliveryId: 999, // Non-existent delivery
+      quantity: 5,
+      notes: 'Invalid',
+    };
+    const response = await request(app)
+      .post('/order-detail-deliveries')
+      .send(newOrderDetailDelivery);
+    expect([400, 500]).toContain(response.status);
+  });
 });

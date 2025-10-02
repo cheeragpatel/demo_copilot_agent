@@ -136,4 +136,19 @@ describe('Branch API', () => {
     const response = await request(app).delete('/branches/999');
     expect(response.status).toBe(404);
   });
+
+  it('should handle database errors gracefully when creating with invalid foreign key', async () => {
+    const newBranch = {
+      headquartersId: 999, // Non-existent headquarters
+      name: 'Invalid Branch',
+      description: 'This should fail',
+      address: '123 Error St',
+      contactPerson: 'Error Person',
+      email: 'error@test.com',
+      phone: '555-0000',
+    };
+    const response = await request(app).post('/branches').send(newBranch);
+    // Should return 500 or 400 depending on error handling
+    expect([400, 500]).toContain(response.status);
+  });
 });

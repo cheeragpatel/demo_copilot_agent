@@ -154,4 +154,16 @@ describe('Delivery API', () => {
     const response = await request(app).delete('/deliveries/999');
     expect(response.status).toBe(404);
   });
+
+  it('should handle database errors gracefully when creating with invalid foreign key', async () => {
+    const newDelivery = {
+      supplierId: 999, // Non-existent supplier
+      deliveryDate: '2024-01-20',
+      name: 'Invalid Delivery',
+      description: 'This should fail',
+      status: 'pending',
+    };
+    const response = await request(app).post('/deliveries').send(newDelivery);
+    expect([400, 500]).toContain(response.status);
+  });
 });
