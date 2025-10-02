@@ -87,6 +87,29 @@ describe('Delivery API', () => {
     expect(response.body.status).toBe('in-transit');
   });
 
+  it('should update a delivery by ID', async () => {
+    // First create a delivery to test updating it
+    const newDelivery = {
+      supplierId: 1,
+      deliveryDate: '2024-01-20',
+      name: 'Original Delivery',
+      description: 'Original description',
+      status: 'pending',
+    };
+    const createResponse = await request(app).post('/deliveries').send(newDelivery);
+    const deliveryId = createResponse.body.deliveryId;
+
+    const updatedDelivery = {
+      ...newDelivery,
+      name: 'Updated Delivery Name',
+      description: 'Updated description',
+    };
+    const response = await request(app).put(`/deliveries/${deliveryId}`).send(updatedDelivery);
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe('Updated Delivery Name');
+    expect(response.body.description).toBe('Updated description');
+  });
+
   it('should delete a delivery by ID', async () => {
     // First create a delivery to test deleting it
     const newDelivery = {
@@ -105,6 +128,30 @@ describe('Delivery API', () => {
 
   it('should return 404 for non-existing delivery', async () => {
     const response = await request(app).get('/deliveries/999');
+    expect(response.status).toBe(404);
+  });
+
+  it('should return 404 when updating non-existing delivery status', async () => {
+    const response = await request(app).put('/deliveries/999/status').send({
+      status: 'in-transit',
+    });
+    expect(response.status).toBe(404);
+  });
+
+  it('should return 404 when updating non-existing delivery', async () => {
+    const updatedDelivery = {
+      supplierId: 1,
+      deliveryDate: '2024-01-20',
+      name: 'Non-existent Delivery',
+      description: 'Does not exist',
+      status: 'pending',
+    };
+    const response = await request(app).put('/deliveries/999').send(updatedDelivery);
+    expect(response.status).toBe(404);
+  });
+
+  it('should return 404 when deleting non-existing delivery', async () => {
+    const response = await request(app).delete('/deliveries/999');
     expect(response.status).toBe(404);
   });
 });

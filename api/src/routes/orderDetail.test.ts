@@ -126,4 +126,21 @@ describe('OrderDetail API', () => {
     const response = await request(app).get('/order-details/999');
     expect(response.status).toBe(404);
   });
+
+  it('should return 404 when updating non-existing order detail', async () => {
+    const updatedOrderDetail = {
+      orderId: 1,
+      productId: 1,
+      quantity: 10,
+      unitPrice: 99.99,
+      notes: 'Does not exist',
+    };
+    const response = await request(app).put('/order-details/999').send(updatedOrderDetail);
+    expect(response.status).toBe(404);
+  });
+
+  it('should return 404 when deleting non-existing order detail', async () => {
+    const response = await request(app).delete('/order-details/999');
+    expect(response.status).toBe(404);
+  });
 });
