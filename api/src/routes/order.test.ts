@@ -116,4 +116,21 @@ describe('Order API', () => {
     const response = await request(app).get('/orders/999');
     expect(response.status).toBe(404);
   });
+
+  it('should return 404 when updating non-existing order', async () => {
+    const updateData = {
+      branchId: 1,
+      orderDate: '2024-01-15T10:00:00Z',
+      name: 'Non-existent Order',
+      description: 'Should not exist',
+      status: 'pending',
+    };
+    const response = await request(app).put('/orders/999').send(updateData);
+    expect(response.status).toBe(404);
+  });
+
+  it('should return 404 when deleting non-existing order', async () => {
+    const response = await request(app).delete('/orders/999');
+    expect(response.status).toBe(404);
+  });
 });

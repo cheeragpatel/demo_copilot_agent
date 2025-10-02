@@ -111,4 +111,21 @@ describe('Delivery API', () => {
     const response = await request(app).get('/deliveries/999');
     expect(response.status).toBe(404);
   });
+
+  it('should return 404 when updating non-existing delivery', async () => {
+    const updateData = {
+      supplierId: 1,
+      deliveryDate: '2024-01-15T10:00:00Z',
+      name: 'Non-existent Delivery',
+      description: 'Should not exist',
+      status: 'pending',
+    };
+    const response = await request(app).put('/deliveries/999').send(updateData);
+    expect(response.status).toBe(404);
+  });
+
+  it('should return 404 when deleting non-existing delivery', async () => {
+    const response = await request(app).delete('/deliveries/999');
+    expect(response.status).toBe(404);
+  });
 });

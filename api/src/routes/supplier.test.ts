@@ -105,4 +105,21 @@ describe('Supplier API', () => {
     const response = await request(app).get('/suppliers/999');
     expect(response.status).toBe(404);
   });
+
+  it('should return 404 when updating non-existing supplier', async () => {
+    const updateData = {
+      name: 'Non-existent Supplier',
+      description: 'Should not exist',
+      contactPerson: 'Nobody',
+      email: 'none@test.com',
+      phone: '555-0000',
+    };
+    const response = await request(app).put('/suppliers/999').send(updateData);
+    expect(response.status).toBe(404);
+  });
+
+  it('should return 404 when deleting non-existing supplier', async () => {
+    const response = await request(app).delete('/suppliers/999');
+    expect(response.status).toBe(404);
+  });
 });

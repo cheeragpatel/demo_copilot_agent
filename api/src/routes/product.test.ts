@@ -120,4 +120,23 @@ describe('Product API', () => {
     const response = await request(app).get('/products/999');
     expect(response.status).toBe(404);
   });
+
+  it('should return 404 when updating non-existing product', async () => {
+    const updateData = {
+      supplierId: 1,
+      name: 'Non-existent Product',
+      description: 'Should not exist',
+      price: 99.99,
+      sku: 'NONE-001',
+      unit: 'each',
+      imgName: 'none.jpg',
+    };
+    const response = await request(app).put('/products/999').send(updateData);
+    expect(response.status).toBe(404);
+  });
+
+  it('should return 404 when deleting non-existing product', async () => {
+    const response = await request(app).delete('/products/999');
+    expect(response.status).toBe(404);
+  });
 });
