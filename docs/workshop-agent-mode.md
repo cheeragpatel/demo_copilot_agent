@@ -45,17 +45,15 @@ This workshop will start with 1 - 1.5 hours of instructor-led presentations and 
 
 | Module | Theme | Energy Marker |
 |--------|-------|---------------|
-| 0 | Setup & Orientation | 👋 Icebreaker |
-| 1 | Copilot Concepts | 💡 First “Aha” |
-| 2 | First Agent Task | ✅ Safe Win |
-| 3 | Break + Q&A | ☕ Reset |
-| 4 | Cart Feature Build | 🛠️ Flow Zone |
-| 5 | Test Coverage Boost | 🧪 Confidence |
-| 6 | Context and Custom Prompts | 🗂️ Optimize |
-| 7 | Coding Agent & Code Review Agent | 🤖 Assist |
-| 8 | Prompt Refinement | 🎯 Mastery |
-| 9A | Security/Observability (Opt) | 🛡️ Insight |
-| 9B | MCP & Browser Testing (Opt) | 🌐 Extend |
+| 0 | Introduction | 👋 Icebreaker |
+| 1 | First Agent Task | ✅ Safe Win |
+| 2 | Cart Feature Build | 🛠️ Flow Zone |
+| 3 | Test Coverage Boost | 🧪 Confidence |
+| 4 | Context and Custom Prompts | 🗂️ Optimize |
+| 5 | Coding Agent & Code Review Agent | 🤖 Assist |
+| 6 | Prompt Refinement | 🎯 Mastery |
+| 7A | Security/Observability (Opt) | 🛡️ Insight |
+| 7B | MCP & Browser Testing (Opt) | 🌐 Extend |
 | Buffer | Stretch / Feedback | 🔁 Close |
 
 ---
@@ -100,7 +98,9 @@ npm run build --workspace=frontend
 
 ---
 
-## 🏗️ Project Flyover (Module 0)
+## 🏗️ Introduction (Module 0)
+
+This application is a simplified e-commerce site with a backend API and a React frontend.  It has a basic product listing, but no cart functionality.  We will be adding that in this workshop.  An overview of the repo structure is below:
 
 | Area | Folder | What To Notice |
 |------|--------|----------------|
@@ -109,9 +109,7 @@ npm run build --workspace=frontend
 | Infra | `infra/` | Deployment script scaffolding |
 | Docs | `docs/` | Reference documentation & this workshop guide |
 
----
-
-## 🧠 Copilot Modes (Module 1)
+We will be using various Copilot modes throughout the workshop.  A quick reference of when to use each mode is below:
 
 | Mode | Use When | Example |
 |------|----------|---------|
@@ -128,7 +126,7 @@ npm run build --workspace=frontend
 
 ---
 
-## ✅ First Win: Safe Agent Task (Module 2)
+## ✅ First Win: Safe Agent Task (Module 1)
 
 **Goal:** Introduce Agent Mode.  Add a harmless log line via Agent Mode to build trust.
 
@@ -153,6 +151,8 @@ curl http://localhost:3000/api/suppliers
 
 You should see a log line like `[Suppliers GET] Returning 3 suppliers` in your `npm run dev` terminal.
 
+> If this request works, but you get 0 suppliers, you likely just need to initialize the database:  `npm run db:init --workspace=api`
+
 * If satisfied, click `Keep` to accept the changes.  
 
 
@@ -164,10 +164,12 @@ You should see a log line like `[Suppliers GET] Returning 3 suppliers` in your `
 
 ---
 
-## 🛒 Feature Build: Cart (Module 4)
+## 🛒 Feature Build: Cart (Module 2)
 
 **Scenario:** This is a more advanced usage of agent mode where we will create a new feature.  The product listing exists in this application, but no shopping cart. We’ll add: Cart page, NavBar badge, add/remove capability, and subtotal.
 
+* If your API is still running from the previous module, stop it (Ctrl + C)
+  * If it is running, the next time you run `npm run dev` it will have a port conflict
 * Clear your previous chat history (`+` icon in the top of the chat panel)
 * Change from `Agent` mode to `Plan` mode
   Plan mode is a custom mode that we have created.  Custom modes influence the prompt that you send.  It allows for more structured planning before implementation.  If interested, take a look at the custom mode file in `.github/chatmodes/Plan.chatmode.md`
@@ -204,7 +206,7 @@ Rather than freeform prompting, you can use a prompt files in agent mode to exec
 
 ---
 
-## 🧪 Testing & Self-Healing (Module 5)
+## 🧪 Testing & Self-Healing (Module 3)
 
 **Scenario:** You have walked through freeform prompting with agent mode.  This module will use a prompt file instead.  Prompt files give the ability to execute the same prompt multiple times (reusability).  It also gives a documented prompt for implementation for a single use.  In this module we will improve test coverage of the API routes.
 
@@ -238,7 +240,7 @@ npm run test:coverage --workspace=api
 
 ---
 
-## 🗂️ Context and Custom Prompts (Module 6)
+## 🗂️ Context and Custom Prompts (Module 4)
 
 **Why:** If you don't have context of the application or an enterprises standards, you are unlikely to write code successfully the first time.  Copilot is no different.  Providing this context helps with consistency & team acceleration.  Examples of context include:
 
@@ -309,7 +311,7 @@ Implement only the skeleton defined in handoff markdown.  No styling yet. Stop a
 
 ---
 
-## 🤖 Coding Agent & Code Review Agent (Module 7)
+## 🤖 Coding Agent & Code Review Agent (Module 5)
 
 **Scenario:** Agent mode is great, but it's not always fun to watch the agent run.  You have better things to do!  You want to delegate coding of a new feature or bug fix to Copilot while you focus on higher-value work.  Coding agent allows you to do this by creating an issue with a prompt that Copilot can pick up and implement.  Once done, code review agent allows you to have Copilot review the code changes and suggest improvements.
 
@@ -336,7 +338,7 @@ Here we are going to use a prompt file from our cart page implementation to show
 
 ---
 
-## 🎯 Prompt Refinement (Module 8)
+## 🎯 Prompt Refinement (Module 6)
 
 **Goal:** Improve your ability to write clear, actionable prompts that lead to high-quality results.  The quality of AI-generated code is heavily influenced by the clarity and specificity of your prompts. Vague or ambiguous prompts can lead to suboptimal outcomes, requiring more iterations and corrections. Copilot can help by providing suggestions and improvements to your prompts. 
 
@@ -365,7 +367,7 @@ Checklist for a Prompt:
 
 ---
 
-## 🛡️ Optional Track A: Security & Observability (Module 9A)
+## 🛡️ Optional: Security & Observability (Module 7A)
 
 Prompts:
 
@@ -383,7 +385,7 @@ Generate a safe patch for the highest priority issue. Explain risk before showin
 
 ---
 
-## 🌐 Optional Track B: MCP & Browser (Module 9B)
+## 🌐 Optional: MCP & Browser (Module 7B)
 
 Local environment recommended (Playwright MCP).
 
@@ -406,6 +408,7 @@ Create a BDD feature file testing adding two products to the cart and verifying 
 |---------|--------------|----------|
 | API 404 | Server not running | Start dev task / correct port |
 | CORS in browser | API port private (Codespaces) | Make port Public |
+| `npm run dev` fails | Port conflict - already running in other terminal | Stop other task (Ctrl + C) |
 | Badge not updating | State not wired to context/provider | Inspect component diff; re-prompt with constraint |
 | Agent stalls mid-plan | Overly vague / no actionable steps | Re-run in Plan Mode first |
 | Repeated test failure | Flaky assumption in test logic | Ask Agent to stabilize with deterministic input |
@@ -418,7 +421,7 @@ Create a BDD feature file testing adding two products to the cart and verifying 
 | Term | Meaning |
 |------|---------|
 | Agent Mode | Copilot executes a multi-step plan & edits code |
-| Plan Mode | Copilot drafts steps—no code yet |
+| Plan Mode | Copilot drafts steps — no code yet |
 | MCP | Extends Copilot with external tools (GitHub, Playwright) |
 | Self-Healing | Agent fixes after a failing test run |
 | Handoff | Compressed summary for continuation or teammate |
@@ -455,7 +458,7 @@ Create a BDD feature file testing adding two products to the cart and verifying 
 
 ---
 
-## 🎤 Closing Script (Facilitator)
+## 🎤 Closing Script 
 
 “Today you moved from watching AI to *directing* it. You learned to scope work, review intelligently, and turn repeated effort into reusable prompts. Your next challenge: pick one recurring task tomorrow and let Agent Mode handle the boilerplate while you focus on intent.”
 
@@ -463,10 +466,8 @@ Create a BDD feature file testing adding two products to the cart and verifying 
 
 ## 🔗 Follow-Up Resources
 
-- Official GitHub Copilot Docs
-- Internal engineering standards (add links)
-- Security hardening checklist (org resource)
-- Prompt crafting cheatsheet (to create next!)
+- [Awesome Copilot Prompt and Instruction Library](https://github.com/github/awesome-copilot)
+- [Official GitHub Copilot Docs](https://docs.github.com/en/copilot)
 
 ---
 
