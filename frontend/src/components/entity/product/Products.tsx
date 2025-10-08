@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
+import { useCart } from '../../../context/CartContext';
 
 interface Product {
   productId: number;
@@ -26,8 +27,10 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [addingToCart, setAddingToCart] = useState<Record<number, boolean>>({});
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
+  const { addItem } = useCart();
 
   const filteredProducts = products?.filter(
     (product) =>
@@ -45,12 +48,22 @@ export default function Products() {
   const handleAddToCart = (productId: number) => {
     const quantity = quantities[productId] || 0;
     if (quantity > 0) {
-      // TODO: Implement cart functionality
-      alert(`Added ${quantity} items to cart`);
-      setQuantities((prev) => ({
-        ...prev,
-        [productId]: 0,
-      }));
+      const product = products?.find(p => p.productId === productId);
+      if (product) {
+        setAddingToCart(prev => ({ ...prev, [productId]: true }));
+        
+        // Add visual feedback with animation
+        addItem(product, quantity);
+        
+        // Reset quantity after brief delay for visual feedback
+        setTimeout(() => {
+          setQuantities((prev) => ({
+            ...prev,
+            [productId]: 0,
+          }));
+          setAddingToCart(prev => ({ ...prev, [productId]: false }));
+        }, 300);
+      }
     }
   };
 
@@ -229,16 +242,27 @@ export default function Products() {
                       </div>
                       <button
                         onClick={() => handleAddToCart(product.productId)}
-                        className={`px-4 py-2 rounded-lg transition-colors ${
-                          quantities[product.productId]
-                            ? 'bg-primary hover:bg-accent text-white'
+                        className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 ${
+                          addingToCart[product.productId]
+                            ? 'bg-green-500 text-white animate-pulse'
+                            : quantities[product.productId]
+                            ? 'bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white shadow-lg hover:shadow-xl'
                             : `${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'} cursor-not-allowed`
                         }`}
-                        disabled={!quantities[product.productId]}
+                        disabled={!quantities[product.productId] || addingToCart[product.productId]}
                         aria-label={`Add ${quantities[product.productId] || 0} ${product.name} to cart`}
                         id={`add-to-cart-${product.productId}`}
                       >
-                        Add to Cart
+                        {addingToCart[product.productId] ? (
+                          <div className="flex items-center space-x-2">
+                            <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span>Adding...</span>
+                          </div>
+                        ) : (
+                          'Add to Cart'
+                        )}
                       </button>
                     </div>
                   </div>
