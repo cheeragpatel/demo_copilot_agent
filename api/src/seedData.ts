@@ -16,6 +16,8 @@ export const suppliers: Supplier[] = [
     contactPerson: 'Felix Whiskerton',
     email: 'felix@purrtech.co',
     phone: '555-0101',
+    active: true,
+    verified: true,
   },
   {
     supplierId: 2,
@@ -24,6 +26,8 @@ export const suppliers: Supplier[] = [
     contactPerson: 'Tabitha Pawson',
     email: 'tabitha@whiskerware.com',
     phone: '555-0102',
+    active: true,
+    verified: false,
   },
   {
     supplierId: 3,
@@ -32,6 +36,8 @@ export const suppliers: Supplier[] = [
     contactPerson: 'Nina Nibbles',
     email: 'nina@catnip.com',
     phone: '555-0103',
+    active: false,
+    verified: false
   },
 ];
 

@@ -5,7 +5,7 @@
 import { getDatabase, DatabaseConnection } from '../db/sqlite';
 import { Headquarters } from '../models/headquarters';
 import { handleDatabaseError, NotFoundError } from '../utils/errors';
-import { buildInsertSQL, buildUpdateSQL, objectToCamelCase } from '../utils/sql';
+import { buildInsertSQL, buildUpdateSQL, objectToCamelCase, mapDatabaseRows, DatabaseRow } from '../utils/sql';
 
 export class HeadquartersRepository {
   private db: DatabaseConnection;
@@ -19,8 +19,8 @@ export class HeadquartersRepository {
    */
   async findAll(): Promise<Headquarters[]> {
     try {
-      const rows = await this.db.all<any>('SELECT * FROM headquarters ORDER BY headquarters_id');
-      return rows.map((row) => objectToCamelCase(row) as Headquarters);
+      const rows = await this.db.all<DatabaseRow>('SELECT * FROM headquarters ORDER BY headquarters_id');
+      return mapDatabaseRows<Headquarters>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -31,10 +31,10 @@ export class HeadquartersRepository {
    */
   async findById(id: number): Promise<Headquarters | null> {
     try {
-      const row = await this.db.get<any>('SELECT * FROM headquarters WHERE headquarters_id = ?', [
+      const row = await this.db.get<DatabaseRow>('SELECT * FROM headquarters WHERE headquarters_id = ?', [
         id,
       ]);
-      return row ? (objectToCamelCase(row) as Headquarters) : null;
+      return row ? objectToCamelCase<Headquarters>(row) : null;
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -48,7 +48,7 @@ export class HeadquartersRepository {
       const { sql, values } = buildInsertSQL('headquarters', headquarters);
       const result = await this.db.run(sql, values);
 
-      const createdHeadquarters = await this.findById(result.lastID!);
+      const createdHeadquarters = await this.findById(result.lastID || 0);
       if (!createdHeadquarters) {
         throw new Error('Failed to retrieve created headquarters');
       }
@@ -120,11 +120,11 @@ export class HeadquartersRepository {
    */
   async findByName(name: string): Promise<Headquarters[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM headquarters WHERE name LIKE ? ORDER BY name',
         [`%${name}%`],
       );
-      return rows.map((row) => objectToCamelCase(row) as Headquarters);
+      return mapDatabaseRows<Headquarters>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }

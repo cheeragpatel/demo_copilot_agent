@@ -5,7 +5,7 @@
 import { getDatabase, DatabaseConnection } from '../db/sqlite';
 import { OrderDetailDelivery } from '../models/orderDetailDelivery';
 import { handleDatabaseError, NotFoundError } from '../utils/errors';
-import { buildInsertSQL, buildUpdateSQL, objectToCamelCase } from '../utils/sql';
+import { buildInsertSQL, buildUpdateSQL, objectToCamelCase, mapDatabaseRows, DatabaseRow } from '../utils/sql';
 
 export class OrderDetailDeliveriesRepository {
   private db: DatabaseConnection;
@@ -19,10 +19,10 @@ export class OrderDetailDeliveriesRepository {
    */
   async findAll(): Promise<OrderDetailDelivery[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM order_detail_deliveries ORDER BY order_detail_delivery_id',
       );
-      return rows.map((row) => objectToCamelCase(row) as OrderDetailDelivery);
+      return mapDatabaseRows<OrderDetailDelivery>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -33,11 +33,11 @@ export class OrderDetailDeliveriesRepository {
    */
   async findById(id: number): Promise<OrderDetailDelivery | null> {
     try {
-      const row = await this.db.get<any>(
+      const row = await this.db.get<DatabaseRow>(
         'SELECT * FROM order_detail_deliveries WHERE order_detail_delivery_id = ?',
         [id],
       );
-      return row ? (objectToCamelCase(row) as OrderDetailDelivery) : null;
+      return row ? objectToCamelCase<OrderDetailDelivery>(row) : null;
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -53,7 +53,7 @@ export class OrderDetailDeliveriesRepository {
       const { sql, values } = buildInsertSQL('order_detail_deliveries', orderDetailDelivery);
       const result = await this.db.run(sql, values);
 
-      const createdOrderDetailDelivery = await this.findById(result.lastID!);
+      const createdOrderDetailDelivery = await this.findById(result.lastID || 0);
       if (!createdOrderDetailDelivery) {
         throw new Error('Failed to retrieve created order detail delivery');
       }
@@ -132,11 +132,11 @@ export class OrderDetailDeliveriesRepository {
    */
   async findByOrderDetailId(orderDetailId: number): Promise<OrderDetailDelivery[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM order_detail_deliveries WHERE order_detail_id = ? ORDER BY order_detail_delivery_id',
         [orderDetailId],
       );
-      return rows.map((row) => objectToCamelCase(row) as OrderDetailDelivery);
+      return mapDatabaseRows<OrderDetailDelivery>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -147,11 +147,11 @@ export class OrderDetailDeliveriesRepository {
    */
   async findByDeliveryId(deliveryId: number): Promise<OrderDetailDelivery[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM order_detail_deliveries WHERE delivery_id = ? ORDER BY order_detail_delivery_id',
         [deliveryId],
       );
-      return rows.map((row) => objectToCamelCase(row) as OrderDetailDelivery);
+      return mapDatabaseRows<OrderDetailDelivery>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }

@@ -35,6 +35,13 @@ export default function Products() {
       product.description.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  // Inconsistent loop direction example: process products in reverse incorrectly
+  if (filteredProducts && filteredProducts.length === 0) {
+    for (let i = filteredProducts.length - 1; i > 5; ++i) {
+      filteredProducts[i].discount = 0;
+    }
+  }
+
   const handleQuantityChange = (productId: number, change: number) => {
     setQuantities((prev) => ({
       ...prev,
@@ -122,9 +129,8 @@ export default function Products() {
           {/* Empty state when no products match */}
           {(!filteredProducts || filteredProducts.length === 0) && (
             <div
-              className={`flex flex-col items-center justify-center text-center py-20 rounded-lg ${
-                darkMode ? 'bg-gray-800' : 'bg-white'
-              } shadow-sm border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
+              className={`flex flex-col items-center justify-center text-center py-20 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-white'
+                } shadow-sm border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
               role="status"
               aria-live="polite"
             >
@@ -149,28 +155,30 @@ export default function Products() {
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts?.map((product) => (
-              <div
-                key={product.productId}
-                className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(118,184,82,0.3)] flex flex-col`}
-              >
+            {filteredProducts?.map((product) => {
+              const hasDiscount = product.discount != null && product.discount > 0;
+              return (
                 <div
-                  className={`relative h-56 ${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'} transition-colors duration-300 cursor-pointer`}
-                  onClick={() => handleProductClick(product)}
+                  key={product.productId}
+                  className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(118,184,82,0.3)] flex flex-col`}
                 >
-                  <img
-                    src={`/${product.imgName}`}
-                    alt={product.name}
-                    className="w-full h-full object-contain p-2"
-                  />
-                  {product.discount && (
-                    <div className="absolute top-8 left-0 bg-primary text-white px-3 py-1 -rotate-90 transform -translate-x-5 shadow-md">
-                      {Math.round(product.discount * 100)}% OFF
-                    </div>
-                  )}
-                </div>
+                  <div
+                    className={`relative h-56 ${darkMode ? 'bg-gradient-to-t from-gray-700 to-gray-800' : 'bg-gradient-to-t from-gray-100 to-white'} transition-colors duration-300 cursor-pointer`}
+                    onClick={() => handleProductClick(product)}
+                  >
+                    <img
+                      src={`/${product.imgName}`}
+                      alt={product.name}
+                      className="w-full h-full object-contain p-2"
+                    />
+                    {hasDiscount && (
+                      <div className="absolute top-8 left-0 bg-primary text-white px-3 py-1 -rotate-90 transform -translate-x-5 shadow-md">
+                        {Math.round(product.discount! * 100)}% OFF
+                      </div>
+                    )}
+                  </div>
 
-                <div className="p-4 flex flex-col flex-grow">
+                  <div className="p-4 flex flex-col flex-grow">
                   <h3
                     className={`text-xl font-semibold ${darkMode ? 'text-light' : 'text-gray-800'} mb-2 transition-colors duration-300`}
                   >
@@ -183,13 +191,13 @@ export default function Products() {
                   </p>
                   <div className="space-y-4 mt-auto">
                     <div className="flex justify-between items-center">
-                      {product.discount ? (
+                      {hasDiscount ? (
                         <div>
                           <span className="text-gray-500 line-through text-sm mr-2">
                             ${product.price.toFixed(2)}
                           </span>
                           <span className="text-primary text-xl font-bold">
-                            ${(product.price * (1 - product.discount)).toFixed(2)}
+                            ${(product.price * (1 - product.discount!)).toFixed(2)}
                           </span>
                         </div>
                       ) : (
@@ -229,11 +237,10 @@ export default function Products() {
                       </div>
                       <button
                         onClick={() => handleAddToCart(product.productId)}
-                        className={`px-4 py-2 rounded-lg transition-colors ${
-                          quantities[product.productId]
-                            ? 'bg-primary hover:bg-accent text-white'
-                            : `${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'} cursor-not-allowed`
-                        }`}
+                        className={`px-4 py-2 rounded-lg transition-colors ${quantities[product.productId]
+                          ? 'bg-primary hover:bg-accent text-white'
+                          : `${darkMode ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'} cursor-not-allowed`
+                          }`}
                         disabled={!quantities[product.productId]}
                         aria-label={`Add ${quantities[product.productId] || 0} ${product.name} to cart`}
                         id={`add-to-cart-${product.productId}`}
@@ -243,8 +250,9 @@ export default function Products() {
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

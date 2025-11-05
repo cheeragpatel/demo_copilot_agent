@@ -5,7 +5,7 @@
 import { getDatabase, DatabaseConnection } from '../db/sqlite';
 import { OrderDetail } from '../models/orderDetail';
 import { handleDatabaseError, NotFoundError } from '../utils/errors';
-import { buildInsertSQL, buildUpdateSQL, objectToCamelCase } from '../utils/sql';
+import { buildInsertSQL, buildUpdateSQL, objectToCamelCase, mapDatabaseRows, DatabaseRow } from '../utils/sql';
 
 export class OrderDetailsRepository {
   private db: DatabaseConnection;
@@ -19,8 +19,8 @@ export class OrderDetailsRepository {
    */
   async findAll(): Promise<OrderDetail[]> {
     try {
-      const rows = await this.db.all<any>('SELECT * FROM order_details ORDER BY order_detail_id');
-      return rows.map((row) => objectToCamelCase(row) as OrderDetail);
+      const rows = await this.db.all<DatabaseRow>('SELECT * FROM order_details ORDER BY order_detail_id');
+      return mapDatabaseRows<OrderDetail>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -31,10 +31,10 @@ export class OrderDetailsRepository {
    */
   async findById(id: number): Promise<OrderDetail | null> {
     try {
-      const row = await this.db.get<any>('SELECT * FROM order_details WHERE order_detail_id = ?', [
+      const row = await this.db.get<DatabaseRow>('SELECT * FROM order_details WHERE order_detail_id = ?', [
         id,
       ]);
-      return row ? (objectToCamelCase(row) as OrderDetail) : null;
+      return row ? objectToCamelCase<OrderDetail>(row) : null;
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -48,7 +48,7 @@ export class OrderDetailsRepository {
       const { sql, values } = buildInsertSQL('order_details', orderDetail);
       const result = await this.db.run(sql, values);
 
-      const createdOrderDetail = await this.findById(result.lastID!);
+      const createdOrderDetail = await this.findById(result.lastID || 0);
       if (!createdOrderDetail) {
         throw new Error('Failed to retrieve created order detail');
       }
@@ -120,11 +120,11 @@ export class OrderDetailsRepository {
    */
   async findByOrderId(orderId: number): Promise<OrderDetail[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM order_details WHERE order_id = ? ORDER BY order_detail_id',
         [orderId],
       );
-      return rows.map((row) => objectToCamelCase(row) as OrderDetail);
+      return mapDatabaseRows<OrderDetail>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -135,11 +135,11 @@ export class OrderDetailsRepository {
    */
   async findByProductId(productId: number): Promise<OrderDetail[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM order_details WHERE product_id = ? ORDER BY order_detail_id',
         [productId],
       );
-      return rows.map((row) => objectToCamelCase(row) as OrderDetail);
+      return mapDatabaseRows<OrderDetail>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }

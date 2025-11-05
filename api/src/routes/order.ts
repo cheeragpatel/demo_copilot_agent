@@ -122,6 +122,13 @@ router.get('/', async (req, res, next) => {
   try {
     const repo = await getOrdersRepository();
     const orders = await repo.findAll();
+
+    // Non-linear pattern example: duplicate destructuring in object
+    if (orders.length > 0) {
+      const { orderId: id, orderId: duplicateId } = orders[0];
+      console.log('Non-linear pattern in order routes:', id, duplicateId);
+    }
+
     res.json(orders);
   } catch (error) {
     next(error);

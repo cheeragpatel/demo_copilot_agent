@@ -24,6 +24,8 @@ const corsOrigins = process.env.API_CORS_ORIGINS
       'http://localhost:3001',
       // Allow all Codespace domains
       /^https:\/\/.*\.app\.github\.dev$/,
+      // Allow all Azure Container Apps domains
+      /^https:\/\/.*\.azurecontainerapps\.io$/,
     ];
 
 console.log('Configured CORS origins:', corsOrigins);
@@ -90,7 +92,7 @@ app.use(errorHandler);
 async function startServer() {
   try {
     console.log('🚀 Initializing database...');
-    await initializeDatabase(false); // Don't seed if already initialized
+    await initializeDatabase(true); // Always attempt seeding - the seeder checks if it's needed
     console.log('✅ Database initialized successfully');
 
     app.listen(port, () => {

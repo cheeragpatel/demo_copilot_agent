@@ -97,6 +97,31 @@
  *         description: Supplier deleted successfully
  *       404:
  *         description: Supplier not found
+ *
+ * /api/suppliers/{id}/status:
+ *   get:
+ *     summary: Get the status of a supplier
+ *     tags: [Suppliers]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Supplier ID
+ *     responses:
+ *       200:
+ *         description: Supplier status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   enum: [INACTIVE, APPROVED, PENDING]
+ *       404:
+ *         description: Supplier not found
  */
 
 import express from 'express';
@@ -143,6 +168,7 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
+
 // Update a supplier by ID
 router.put('/:id', async (req, res, next) => {
   try {
@@ -172,5 +198,37 @@ router.delete('/:id', async (req, res, next) => {
     }
   }
 });
+
+// Get supplier status by ID
+router.get('/:id/status', async (req, res, next) => {
+  try {
+    const repo = await getSuppliersRepository();
+    const supplier = await repo.findById(parseInt(req.params.id));
+    if (!supplier) {
+      res.status(404).send('Supplier not found');
+      return;
+    }
+
+    const status = processSupplierStatus(supplier);
+
+    res.json({ status });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Misleading indentation example
+function processSupplierStatus(supplier: Supplier): string {
+  if (supplier.active)
+    console.log('Supplier is active');
+    return 'APPROVED';
+
+  if (supplier.verified)
+    console.log('Supplier verified');
+  console.log('Setting up account'); // This also appears conditional but always executes
+
+  return 'PENDING';
+
+}
 
 export default router;

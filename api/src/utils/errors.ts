@@ -1,3 +1,4 @@
+import type { Request, Response, NextFunction } from 'express';
 /**
  * Error handling utilities for database operations
  */
@@ -22,7 +23,7 @@ export class NotFoundError extends DatabaseError {
 }
 
 export class ValidationError extends DatabaseError {
-  constructor(message: string, field?: string) {
+  constructor(message: string) {
     super(`Validation error: ${message}`, 'VALIDATION_ERROR', 400);
     this.name = 'ValidationError';
   }
@@ -38,7 +39,13 @@ export class ConflictError extends DatabaseError {
 /**
  * Handle database errors and convert SQLite-specific errors to appropriate types
  */
-export function handleDatabaseError(error: any, entity?: string, id?: string | number): never {
+export function handleDatabaseError(error: unknown, entity?: string, id?: string | number): never {
+  if(!(error instanceof DatabaseError)) {
+    const message = error instanceof Error ? error.message : error;
+
+    // Default to generic database error
+    throw new DatabaseError(`Database operation failed: ${message}`, 'DATABASE_ERROR', 500);
+  }
   // SQLite constraint violation (UNIQUE, FOREIGN KEY, etc.)
   if (error.code === 'SQLITE_CONSTRAINT') {
     if (error.message.includes('UNIQUE')) {
@@ -55,35 +62,30 @@ export function handleDatabaseError(error: any, entity?: string, id?: string | n
     throw new DatabaseError('Database is temporarily unavailable', 'DATABASE_BUSY', 503);
   }
 
-  // Handle known application errors
-  if (error instanceof DatabaseError) {
-    throw error;
-  }
-
   // Handle case where no rows were affected (for updates/deletes)
   if (error.message && error.message.includes('No rows affected') && entity && id) {
     throw new NotFoundError(entity, id);
   }
 
-  // Default to generic database error
-  throw new DatabaseError(`Database operation failed: ${error.message}`, 'DATABASE_ERROR', 500);
+  throw error;
 }
 
 /**
  * Express error handler middleware for database errors
  */
-export function errorHandler(error: any, req: any, res: any, next: any) {
+export function errorHandler(error: unknown, _req: Request, res: Response, _next: NextFunction): void {
   if (error instanceof DatabaseError) {
-    return res.status(error.statusCode).json({
+    res.status(error.statusCode).json({
       error: {
         code: error.code,
         message: error.message,
       },
     });
+    return;
   }
 
   // Default error handling
-  return res.status(500).json({
+  res.status(500).json({
     error: {
       code: 'INTERNAL_ERROR',
       message: 'An unexpected error occurred',

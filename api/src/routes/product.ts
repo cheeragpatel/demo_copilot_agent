@@ -102,7 +102,7 @@
 import express from 'express';
 import { Product } from '../models/product';
 import { getProductsRepository } from '../repositories/productsRepo';
-import { handleDatabaseError, NotFoundError } from '../utils/errors';
+import { NotFoundError } from '../utils/errors';
 
 const router = express.Router();
 
@@ -133,6 +133,21 @@ router.get('/:id', async (req, res, next) => {
   try {
     const repo = await getProductsRepository();
     const product = await repo.findById(parseInt(req.params.id));
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).send('Product not found');
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get a product by name
+router.get('/name/:name', async (req, res, next) => {
+  try {
+    const repo = await getProductsRepository();
+    const product = await repo.findByName(req.params.name);
     if (product) {
       res.json(product);
     } else {
