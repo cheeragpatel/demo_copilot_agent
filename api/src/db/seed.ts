@@ -25,7 +25,7 @@ export class DatabaseSeeder {
         'SELECT COUNT(*) as count FROM suppliers',
       );
       return (result?.count || 0) > 0;
-    } catch (error) {
+    } catch {
       // If table doesn't exist, database is not seeded
       return false;
     }

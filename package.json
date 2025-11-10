@@ -17,11 +17,14 @@
     "test": "npm run test --workspaces",
     "test:api": "npm run test --workspace=api",
     "test:frontend": "npm run test --workspace=frontend",
-    "lint": "npm run lint --workspace=frontend",
+    "test:e2e": "npm run test:e2e --workspace=frontend",
+    "lint": "npm run lint --workspaces",
+    "lint:api": "npm run lint --workspace=api",
+    "lint:frontend": "npm run lint --workspace=frontend",
     "prettify": "prettier --cache --write \"**/*.{ts,tsx}\""
   },
   "devDependencies": {
-    "concurrently": "^6.2.1",
+    "concurrently": "9.2.1",
     "prettier": "^3.3.3"
   },
   "prettier": {

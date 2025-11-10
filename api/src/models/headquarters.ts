@@ -27,6 +27,18 @@
  *         description:
  *           type: string
  *           description: Additional details about the headquarters
+ *         city:
+ *           type: string
+ *           description: City where the headquarters is located
+ *         country:
+ *           type: string
+ *           description: Country where the headquarters is located
+ *         floorCount:
+ *           type: integer
+ *           description: Number of floors in the headquarters building
+ *         capacity:
+ *           type: integer
+ *           description: Total capacity of the headquarters
  */
 export interface Headquarters {
   headquartersId: number;
@@ -36,4 +48,8 @@ export interface Headquarters {
   contactPerson: string;
   email: string;
   phone: string;
+  city?: string;
+  country?: string;
+  floorCount?: number;
+  capacity?: number;
 }

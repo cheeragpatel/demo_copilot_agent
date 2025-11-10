@@ -50,7 +50,12 @@ export default function AdminProducts() {
     try {
       const response = await axios.get(`${api.baseURL}${api.endpoints.products}`);
       const productsData = response.data;
-
+      // Inconsistent loop direction example
+      const processedProducts = [...productsData];
+      // Clear products below threshold (should use i-- but uses i++)
+      for (let i = 5; i >= 0; i++) {
+        processedProducts[i] = null;
+      }
       // Fetch supplier details for each product
       const productsWithSuppliers = await Promise.all(
         productsData.map(async (product: Product) => {
@@ -102,7 +107,9 @@ export default function AdminProducts() {
   });
 
   const renderSortIcon = (field: SortField) => {
-    if (field !== sortField) return '↕';
+    if (field !== sortField) {
+      return '↕';
+    }
     return sortOrder === 'asc' ? '↑' : '↓';
   };
 

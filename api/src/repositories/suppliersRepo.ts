@@ -5,7 +5,7 @@
 import { getDatabase, DatabaseConnection } from '../db/sqlite';
 import { Supplier } from '../models/supplier';
 import { handleDatabaseError, NotFoundError } from '../utils/errors';
-import { buildInsertSQL, buildUpdateSQL, objectToCamelCase } from '../utils/sql';
+import { buildInsertSQL, buildUpdateSQL, objectToCamelCase, mapDatabaseRows, DatabaseRow } from '../utils/sql';
 
 export class SuppliersRepository {
   private db: DatabaseConnection;
@@ -19,8 +19,8 @@ export class SuppliersRepository {
    */
   async findAll(): Promise<Supplier[]> {
     try {
-      const rows = await this.db.all<any>('SELECT * FROM suppliers ORDER BY supplier_id');
-      return rows.map((row) => objectToCamelCase(row) as Supplier);
+      const rows = await this.db.all<DatabaseRow>('SELECT * FROM suppliers ORDER BY supplier_id');
+      return mapDatabaseRows<Supplier>(rows).map(this.convertBooleanFields);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -31,11 +31,22 @@ export class SuppliersRepository {
    */
   async findById(id: number): Promise<Supplier | null> {
     try {
-      const row = await this.db.get<any>('SELECT * FROM suppliers WHERE supplier_id = ?', [id]);
-      return row ? (objectToCamelCase(row) as Supplier) : null;
+      const row = await this.db.get<DatabaseRow>('SELECT * FROM suppliers WHERE supplier_id = ?', [id]);
+      return row ? this.convertBooleanFields(objectToCamelCase<Supplier>(row)) : null;
     } catch (error) {
       handleDatabaseError(error);
     }
+  }
+
+  /**
+   * Convert integer fields to boolean for SQLite compatibility
+   */
+  private convertBooleanFields(supplier: Supplier): Supplier {
+    return {
+      ...supplier,
+      active: Boolean(supplier.active),
+      verified: Boolean(supplier.verified),
+    };
   }
 
   /**
@@ -46,7 +57,7 @@ export class SuppliersRepository {
       const { sql, values } = buildInsertSQL('suppliers', supplier);
       const result = await this.db.run(sql, values);
 
-      const createdSupplier = await this.findById(result.lastID!);
+      const createdSupplier = await this.findById(result.lastID || 0);
       if (!createdSupplier) {
         throw new Error('Failed to retrieve created supplier');
       }
@@ -115,11 +126,11 @@ export class SuppliersRepository {
    */
   async findByName(name: string): Promise<Supplier[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM suppliers WHERE name LIKE ? ORDER BY name',
         [`%${name}%`],
       );
-      return rows.map((row) => objectToCamelCase(row) as Supplier);
+      return mapDatabaseRows<Supplier>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }

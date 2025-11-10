@@ -83,15 +83,15 @@ export class SelectQueryBuilder {
     let sql = `SELECT ${this.query.select.join(', ')} FROM ${this.query.from}`;
 
     if (this.query.joins.length > 0) {
-      sql += ' ' + this.query.joins.join(' ');
+      sql += ` ${  this.query.joins.join(' ')}`;
     }
 
     if (this.query.where.length > 0) {
-      sql += ' WHERE ' + this.query.where.join(' AND ');
+      sql += ` WHERE ${  this.query.where.join(' AND ')}`;
     }
 
     if (this.query.orderBy.length > 0) {
-      sql += ' ORDER BY ' + this.query.orderBy.join(', ');
+      sql += ` ORDER BY ${  this.query.orderBy.join(', ')}`;
     }
 
     if (this.query.limit !== undefined) {
@@ -123,8 +123,8 @@ export function toCamelCase(str: string): string {
 /**
  * Convert object keys from camelCase to snake_case
  */
-export function objectToSnakeCase(obj: Record<string, any>): Record<string, any> {
-  const result: Record<string, any> = {};
+export function objectToSnakeCase<T extends Record<string, unknown>>(obj: T): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(obj)) {
     result[toSnakeCase(key)] = value;
@@ -134,16 +134,28 @@ export function objectToSnakeCase(obj: Record<string, any>): Record<string, any>
 }
 
 /**
- * Convert object keys from snake_case to camelCase
+ * Type for database row that can be converted to a model
  */
-export function objectToCamelCase(obj: Record<string, any>): Record<string, any> {
-  const result: Record<string, any> = {};
+export type DatabaseRow = Record<string, unknown>;
+
+/**
+ * Convert object keys from snake_case to camelCase with typed output
+ */
+export function objectToCamelCase<T>(obj: DatabaseRow): T {
+  const result: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(obj)) {
     result[toCamelCase(key)] = value;
   }
 
-  return result;
+  return result as T;
+}
+
+/**
+ * Convert multiple database rows to typed models
+ */
+export function mapDatabaseRows<T>(rows: DatabaseRow[]): T[] {
+  return rows.map((row) => objectToCamelCase<T>(row));
 }
 
 /**
@@ -158,10 +170,10 @@ export function generatePlaceholders(count: number): string {
 /**
  * Build INSERT SQL with placeholders
  */
-export function buildInsertSQL(
+export function buildInsertSQL<T extends Record<string, unknown>>(
   table: string,
-  data: Record<string, any>,
-): { sql: string; values: any[] } {
+  data: T,
+): { sql: string; values: unknown[] } {
   const snakeCaseData = objectToSnakeCase(data);
   const columns = Object.keys(snakeCaseData);
   const values = Object.values(snakeCaseData);
@@ -175,12 +187,12 @@ export function buildInsertSQL(
 /**
  * Build UPDATE SQL with placeholders
  */
-export function buildUpdateSQL(
+export function buildUpdateSQL<T extends Record<string, unknown>>(
   table: string,
-  data: Record<string, any>,
+  data: Partial<T>,
   whereClause: string,
-): { sql: string; values: any[] } {
-  const snakeCaseData = objectToSnakeCase(data);
+): { sql: string; values: unknown[] } {
+  const snakeCaseData = objectToSnakeCase(data as Record<string, unknown>);
   const columns = Object.keys(snakeCaseData);
   const values = Object.values(snakeCaseData);
 
@@ -193,7 +205,7 @@ export function buildUpdateSQL(
 /**
  * Validate required fields in an object
  */
-export function validateRequiredFields(obj: Record<string, any>, requiredFields: string[]): void {
+export function validateRequiredFields<T extends Record<string, unknown>>(obj: T, requiredFields: string[]): void {
   for (const field of requiredFields) {
     if (obj[field] === undefined || obj[field] === null || obj[field] === '') {
       throw new Error(`Required field '${field}' is missing or empty`);

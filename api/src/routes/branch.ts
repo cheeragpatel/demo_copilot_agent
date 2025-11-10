@@ -102,7 +102,7 @@
 import express from 'express';
 import { Branch } from '../models/branch';
 import { getBranchesRepository } from '../repositories/branchesRepo';
-import { handleDatabaseError, NotFoundError } from '../utils/errors';
+import { NotFoundError } from '../utils/errors';
 
 const router = express.Router();
 

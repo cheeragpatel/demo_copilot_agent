@@ -5,7 +5,7 @@
 import { getDatabase, DatabaseConnection } from '../db/sqlite';
 import { Delivery } from '../models/delivery';
 import { handleDatabaseError, NotFoundError } from '../utils/errors';
-import { buildInsertSQL, buildUpdateSQL, objectToCamelCase } from '../utils/sql';
+import { buildInsertSQL, buildUpdateSQL, objectToCamelCase, mapDatabaseRows, DatabaseRow } from '../utils/sql';
 
 export class DeliveriesRepository {
   private db: DatabaseConnection;
@@ -19,8 +19,8 @@ export class DeliveriesRepository {
    */
   async findAll(): Promise<Delivery[]> {
     try {
-      const rows = await this.db.all<any>('SELECT * FROM deliveries ORDER BY delivery_id');
-      return rows.map((row) => objectToCamelCase(row) as Delivery);
+      const rows = await this.db.all<DatabaseRow>('SELECT * FROM deliveries ORDER BY delivery_id');
+      return mapDatabaseRows<Delivery>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -31,8 +31,8 @@ export class DeliveriesRepository {
    */
   async findById(id: number): Promise<Delivery | null> {
     try {
-      const row = await this.db.get<any>('SELECT * FROM deliveries WHERE delivery_id = ?', [id]);
-      return row ? (objectToCamelCase(row) as Delivery) : null;
+      const row = await this.db.get<DatabaseRow>('SELECT * FROM deliveries WHERE delivery_id = ?', [id]);
+      return row ? objectToCamelCase<Delivery>(row) : null;
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -46,7 +46,7 @@ export class DeliveriesRepository {
       const { sql, values } = buildInsertSQL('deliveries', delivery);
       const result = await this.db.run(sql, values);
 
-      const createdDelivery = await this.findById(result.lastID!);
+      const createdDelivery = await this.findById(result.lastID || 0);
       if (!createdDelivery) {
         throw new Error('Failed to retrieve created delivery');
       }
@@ -115,11 +115,11 @@ export class DeliveriesRepository {
    */
   async findBySupplierId(supplierId: number): Promise<Delivery[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM deliveries WHERE supplier_id = ? ORDER BY delivery_date DESC',
         [supplierId],
       );
-      return rows.map((row) => objectToCamelCase(row) as Delivery);
+      return mapDatabaseRows<Delivery>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -130,11 +130,11 @@ export class DeliveriesRepository {
    */
   async findByStatus(status: string): Promise<Delivery[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM deliveries WHERE status = ? ORDER BY delivery_date DESC',
         [status],
       );
-      return rows.map((row) => objectToCamelCase(row) as Delivery);
+      return mapDatabaseRows<Delivery>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -145,11 +145,11 @@ export class DeliveriesRepository {
    */
   async findByDateRange(startDate: string, endDate: string): Promise<Delivery[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM deliveries WHERE delivery_date >= ? AND delivery_date <= ? ORDER BY delivery_date DESC',
         [startDate, endDate],
       );
-      return rows.map((row) => objectToCamelCase(row) as Delivery);
+      return mapDatabaseRows<Delivery>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }

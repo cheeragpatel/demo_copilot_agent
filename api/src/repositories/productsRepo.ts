@@ -5,7 +5,7 @@
 import { getDatabase, DatabaseConnection } from '../db/sqlite';
 import { Product } from '../models/product';
 import { handleDatabaseError, NotFoundError } from '../utils/errors';
-import { buildInsertSQL, buildUpdateSQL, objectToCamelCase } from '../utils/sql';
+import { buildInsertSQL, buildUpdateSQL, objectToCamelCase, mapDatabaseRows, DatabaseRow } from '../utils/sql';
 
 export class ProductsRepository {
   private db: DatabaseConnection;
@@ -19,8 +19,8 @@ export class ProductsRepository {
    */
   async findAll(): Promise<Product[]> {
     try {
-      const rows = await this.db.all<any>('SELECT * FROM products ORDER BY product_id');
-      return rows.map((row) => objectToCamelCase(row) as Product);
+      const rows = await this.db.all<DatabaseRow>('SELECT * FROM products ORDER BY product_id');
+      return mapDatabaseRows<Product>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -31,8 +31,8 @@ export class ProductsRepository {
    */
   async findById(id: number): Promise<Product | null> {
     try {
-      const row = await this.db.get<any>('SELECT * FROM products WHERE product_id = ?', [id]);
-      return row ? (objectToCamelCase(row) as Product) : null;
+      const row = await this.db.get<DatabaseRow>('SELECT * FROM products WHERE product_id = ?', [id]);
+      return row ? objectToCamelCase<Product>(row) : null;
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -46,7 +46,7 @@ export class ProductsRepository {
       const { sql, values } = buildInsertSQL('products', product);
       const result = await this.db.run(sql, values);
 
-      const createdProduct = await this.findById(result.lastID!);
+      const createdProduct = await this.findById(result.lastID || 0);
       if (!createdProduct) {
         throw new Error('Failed to retrieve created product');
       }
@@ -115,11 +115,11 @@ export class ProductsRepository {
    */
   async findBySupplierId(supplierId: number): Promise<Product[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM products WHERE supplier_id = ? ORDER BY name',
         [supplierId],
       );
-      return rows.map((row) => objectToCamelCase(row) as Product);
+      return mapDatabaseRows<Product>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -130,11 +130,10 @@ export class ProductsRepository {
    */
   async findByName(name: string): Promise<Product[]> {
     try {
-      const rows = await this.db.all<any>(
-        'SELECT * FROM products WHERE name LIKE ? ORDER BY name',
-        [`%${name}%`],
+      const rows = await this.db.all<DatabaseRow>(
+        `SELECT * FROM products WHERE name LIKE '%${name}%' ORDER BY name`,
       );
-      return rows.map((row) => objectToCamelCase(row) as Product);
+      return mapDatabaseRows<Product>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }

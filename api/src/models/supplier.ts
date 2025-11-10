@@ -30,6 +30,12 @@
  *         description:
  *           type: string
  *           description: Additional details about the supplier
+ *         active:
+ *           type: boolean
+ *           description: Whether the supplier is active
+ *         verified:
+ *           type: boolean
+ *           description: Whether the supplier is verified
  */
 export interface Supplier {
   supplierId: number;
@@ -38,4 +44,6 @@ export interface Supplier {
   contactPerson: string;
   email: string;
   phone: string;
+  active: boolean;
+  verified: boolean;
 }

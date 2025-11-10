@@ -29,6 +29,7 @@ interface ProductFormProps {
 
 export default function ProductForm({ product, suppliers, onClose, onSave }: ProductFormProps) {
   const { darkMode } = useTheme();
+
   const [formData, setFormData] = useState<Partial<Product>>(
     product || {
       name: '',
@@ -49,8 +50,12 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
       } else {
         await axios.post(`${api.baseURL}${api.endpoints.products}`, formData);
       }
-      onSave();
-      onClose();
+      if (typeof onSave === 'function') {
+        onSave();
+      }
+      if (typeof onClose === 'function') {
+        onClose();
+      }
     } catch (error) {
       console.error('Error saving product:', error);
     }

@@ -5,7 +5,7 @@
 import { getDatabase, DatabaseConnection } from '../db/sqlite';
 import { Branch } from '../models/branch';
 import { handleDatabaseError, NotFoundError } from '../utils/errors';
-import { buildInsertSQL, buildUpdateSQL, objectToCamelCase } from '../utils/sql';
+import { buildInsertSQL, buildUpdateSQL, objectToCamelCase, mapDatabaseRows, DatabaseRow } from '../utils/sql';
 
 export class BranchesRepository {
   private db: DatabaseConnection;
@@ -19,8 +19,8 @@ export class BranchesRepository {
    */
   async findAll(): Promise<Branch[]> {
     try {
-      const rows = await this.db.all<any>('SELECT * FROM branches ORDER BY branch_id');
-      return rows.map((row) => objectToCamelCase(row) as Branch);
+      const rows = await this.db.all<DatabaseRow>('SELECT * FROM branches ORDER BY branch_id');
+      return mapDatabaseRows<Branch>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -31,8 +31,8 @@ export class BranchesRepository {
    */
   async findById(id: number): Promise<Branch | null> {
     try {
-      const row = await this.db.get<any>('SELECT * FROM branches WHERE branch_id = ?', [id]);
-      return row ? (objectToCamelCase(row) as Branch) : null;
+      const row = await this.db.get<DatabaseRow>('SELECT * FROM branches WHERE branch_id = ?', [id]);
+      return row ? objectToCamelCase<Branch>(row) : null;
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -46,7 +46,7 @@ export class BranchesRepository {
       const { sql, values } = buildInsertSQL('branches', branch);
       const result = await this.db.run(sql, values);
 
-      const createdBranch = await this.findById(result.lastID!);
+      const createdBranch = await this.findById(result.lastID || 0);
       if (!createdBranch) {
         throw new Error('Failed to retrieve created branch');
       }
@@ -115,11 +115,11 @@ export class BranchesRepository {
    */
   async findByHeadquartersId(headquartersId: number): Promise<Branch[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM branches WHERE headquarters_id = ? ORDER BY name',
         [headquartersId],
       );
-      return rows.map((row) => objectToCamelCase(row) as Branch);
+      return mapDatabaseRows<Branch>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
@@ -130,11 +130,11 @@ export class BranchesRepository {
    */
   async findByName(name: string): Promise<Branch[]> {
     try {
-      const rows = await this.db.all<any>(
+      const rows = await this.db.all<DatabaseRow>(
         'SELECT * FROM branches WHERE name LIKE ? ORDER BY name',
         [`%${name}%`],
       );
-      return rows.map((row) => objectToCamelCase(row) as Branch);
+      return mapDatabaseRows<Branch>(rows);
     } catch (error) {
       handleDatabaseError(error);
     }
