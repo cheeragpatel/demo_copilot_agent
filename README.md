@@ -5,7 +5,7 @@
 
 Welcome to the OctoCAT Supply Website - your go-to demo for learning the incredible capabilities of GitHub Copilot, GHAS, and the power of AI-assisted development!
 
-Go to the [Workshop Guide](./docs/workshop-agent-mode.md) for a step-by-step learning path.
+Go to the [Workshop Guide](./docs/workshop-use-case-focused.md) for a step-by-step learning path.
 
 ## 🏗️ Architecture
 
