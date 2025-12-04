@@ -171,7 +171,7 @@ You can follow along as files are created/modified and also in the task list.  I
 
 ### Step 1: Use a Reusable Prompt File
 
-Manually prompting for test coverage improvements can work.  However, it also means that the process many be inconsistent from developers and you never learn from mistakes. Instead, (have Copilot) create a documented prompt file checked into your repository.  Utilize this and enhance it over time based on responses where Copilot struggled.  Here we have provided a starting point (well, Copilot has)!
+Manually prompting for test coverage improvements can work.  However, it also means that the process may be inconsistent from developers and you never learn from mistakes. Instead, (have Copilot) create a documented prompt file checked into your repository.  Utilize this and enhance it over time based on responses where Copilot struggled.  Here we have provided a starting point (well, Copilot has)!
 
 1. If you haven't already, click the `+` button in the Copilot Chat panel to clear your history.  This is a best practice when switching between use cases or activities to avoid sending unrelated context.
 2. Review `.github/prompts/demo-unit-test-coverage.prompt.md`
@@ -307,7 +307,7 @@ Here we will use GitHub's remote Model Context Protocol (MCP) server to retrieve
    - Select the `github-remote` server
    - Click "Start Server"
    - This will say "The MCP Server Definition 'github-remote' wants to authenticate to GitHub." Click "Allow" to continue
-   - You will be redirectoed to an OAUTH flow.  Click 'Continue' on the account you are using.  
+   - You will be redirected to an OAUTH flow.  Click 'Continue' on the account you are using.  
    - If the organization for your repo requires SSO, you may need to authenticate that as well.  If not you can just click 'Continue' again.
 2. Check out the `feature-add-tos-download` branch.
    `git checkout feature-add-tos-download` (you may need to `git stash` first)
