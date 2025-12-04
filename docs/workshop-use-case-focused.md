@@ -284,7 +284,7 @@ Sometimes you need to pass context to a teammate, a new chat session, or an agen
    ```text
    /handoff
    ```
-   **NOT** the `/handoff-to-copilot-coding-agent` unless you want to have an agent implement it right away.  We'll cover that later...
+   **NOT** the `/handoff-to-copilot-coding-agent` unless you want to have an agent to implement it right away.  We'll cover that later...
 4. Review generated `handoff.md` - contains:
    - Requirements summary
    - Implementation plan
