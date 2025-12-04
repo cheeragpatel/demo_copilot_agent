@@ -427,7 +427,7 @@ Spaces provided additional compliance context for Copilot to reference when anal
 
 ### Step 1: Assign Code Review Agent
 
-1. In your repo, find the pull request `Feature: Add ToS Download and open it.  
+1. In your repo, find the pull request `Feature: Add ToS Download` and open it.  
 2. Assign **Copilot** as a reviewer 
 3. Scroll down to the bottom of the pull request and you should see a message that you requested a review from Copilot.
 
