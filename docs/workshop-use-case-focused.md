@@ -379,7 +379,7 @@ Spaces provided additional compliance context for Copilot to reference when anal
    ```text
    Assign this issue to the Copilot coding agent.
    ```
-   Note an alternative approach is do do this directly in GitHub by manually creating the issue and then assigning it to `Copilot`.
+   Note an alternative approach is do this directly in GitHub by manually creating the issue and then assigning it to `Copilot`.
 6. Open the issue in GitHub and you should see the 👀 indicator showing that Copilot saw the issue.  It should also have a link to a work in progress pull request shortly after.
 
 ### Step 3: Monitor from Mission Control
@@ -459,7 +459,7 @@ Alternatively you can open a new comment:
 @Copilot implement all your review suggestions
 ```
 
-### Step 4: Grouped Changes (Optional)
+### Step 5: Grouped Changes (Optional)
 
 ## Copilot Group Changes in PRs :copilot: 📦
 
