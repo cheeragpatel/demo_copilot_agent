@@ -221,7 +221,7 @@ Review the coverage report - it should be significantly improved.
 
 ## Use Case 3: "We have standards and Copilot needs to understand and follow them"
 
-**Scenario:** Your uses an internal observability framework (TAO). New developers keep forgetting to add proper logging/metrics.  Beyond that, they continue to miss compliance requirements which delay releases.
+**Scenario:** You use an internal observability framework (TAO). New developers keep forgetting to add proper logging/metrics.  Beyond that, they continue to miss compliance requirements which delay releases.
 
 **Your Challenge:** Encode team standards so Copilot enforces them automatically.
 
@@ -229,7 +229,7 @@ One of the most powerful features of Copilot is **Custom Instructions**.  These 
 
 ### Step 1: Review Current Standards
 
-1. Open `.github/copilot/copilot-instructions.md`
+1. Open `.github/copilot-instructions.md`
 2. See existing standards for the project.  Note you can reference other files, links, etc.
    - Formatting is just markdown.  Be concise as this takes up context space.  
    - You can reference other files or links for more detail.  
