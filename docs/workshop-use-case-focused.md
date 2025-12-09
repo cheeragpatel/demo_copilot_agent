@@ -221,7 +221,7 @@ Review the coverage report - it should be significantly improved.
 
 ## Use Case 3: "We have standards and Copilot needs to understand and follow them"
 
-**Scenario:** Your uses an internal observability framework (TAO). New developers keep forgetting to add proper logging/metrics.  Beyond that, they continue to miss compliance requirements which delay releases.
+**Scenario:** You use an internal observability framework (TAO). New developers keep forgetting to add proper logging/metrics.  Beyond that, they continue to miss compliance requirements which delay releases.
 
 **Your Challenge:** Encode team standards so Copilot enforces them automatically.
 
