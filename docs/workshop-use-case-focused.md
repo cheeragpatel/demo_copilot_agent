@@ -171,7 +171,7 @@ You can follow along as files are created/modified and also in the task list.  I
 
 ### Step 1: Use a Reusable Prompt File
 
-Manually prompting for test coverage improvements can work.  However, it also means that the process many be inconsistent from developers and you never learn from mistakes. Instead, (have Copilot) create a documented prompt file checked into your repository.  Utilize this and enhance it over time based on responses where Copilot struggled.  Here we have provided a starting point (well, Copilot has)!
+Manually prompting for test coverage improvements can work.  However, it also means that the process may be inconsistent from developers and you never learn from mistakes. Instead, (have Copilot) create a documented prompt file checked into your repository.  Utilize this and enhance it over time based on responses where Copilot struggled.  Here we have provided a starting point (well, Copilot has)!
 
 1. If you haven't already, click the `+` button in the Copilot Chat panel to clear your history.  This is a best practice when switching between use cases or activities to avoid sending unrelated context.
 2. Review `.github/prompts/demo-unit-test-coverage.prompt.md`
@@ -221,7 +221,7 @@ Review the coverage report - it should be significantly improved.
 
 ## Use Case 3: "We have standards and Copilot needs to understand and follow them"
 
-**Scenario:** Your uses an internal observability framework (TAO). New developers keep forgetting to add proper logging/metrics.  Beyond that, they continue to miss compliance requirements which delay releases.
+**Scenario:** You use an internal observability framework (TAO). New developers keep forgetting to add proper logging/metrics.  Beyond that, they continue to miss compliance requirements which delay releases.
 
 **Your Challenge:** Encode team standards so Copilot enforces them automatically.
 
@@ -229,7 +229,7 @@ One of the most powerful features of Copilot is **Custom Instructions**.  These 
 
 ### Step 1: Review Current Standards
 
-1. Open `.github/copilot/copilot-instructions.md`
+1. Open `.github/copilot-instructions.md`
 2. See existing standards for the project.  Note you can reference other files, links, etc.
    - Formatting is just markdown.  Be concise as this takes up context space.  
    - You can reference other files or links for more detail.  
@@ -284,7 +284,7 @@ Sometimes you need to pass context to a teammate, a new chat session, or an agen
    ```text
    /handoff
    ```
-   **NOT** the `/handoff-to-copilot-coding-agent` unless you want to have an agent implement it right away.  We'll cover that later...
+   **NOT** the `/handoff-to-copilot-coding-agent` unless you want to have an agent to implement it right away.  We'll cover that later...
 4. Review generated `handoff.md` - contains:
    - Requirements summary
    - Implementation plan
@@ -307,7 +307,7 @@ Here we will use GitHub's remote Model Context Protocol (MCP) server to retrieve
    - Select the `github-remote` server
    - Click "Start Server"
    - This will say "The MCP Server Definition 'github-remote' wants to authenticate to GitHub." Click "Allow" to continue
-   - You will be redirectoed to an OAUTH flow.  Click 'Continue' on the account you are using.  
+   - You will be redirected to an OAUTH flow.  Click 'Continue' on the account you are using.  
    - If the organization for your repo requires SSO, you may need to authenticate that as well.  If not you can just click 'Continue' again.
 2. Check out the `feature-add-tos-download` branch.
    `git checkout feature-add-tos-download` (you may need to `git stash` first)
@@ -379,7 +379,7 @@ Spaces provided additional compliance context for Copilot to reference when anal
    ```text
    Assign this issue to the Copilot coding agent.
    ```
-   Note an alternative approach is do do this directly in GitHub by manually creating the issue and then assigning it to `Copilot`.
+   Note an alternative approach is do this directly in GitHub by manually creating the issue and then assigning it to `Copilot`.
 6. Open the issue in GitHub and you should see the 👀 indicator showing that Copilot saw the issue.  It should also have a link to a work in progress pull request shortly after.
 
 ### Step 3: Monitor from Mission Control
@@ -427,7 +427,7 @@ Spaces provided additional compliance context for Copilot to reference when anal
 
 ### Step 1: Assign Code Review Agent
 
-1. In your repo, find the pull request `Feature: Add ToS Download and open it.  
+1. In your repo, find the pull request `Feature: Add ToS Download` and open it.  
 2. Assign **Copilot** as a reviewer 
 3. Scroll down to the bottom of the pull request and you should see a message that you requested a review from Copilot.
 
@@ -459,7 +459,7 @@ Alternatively you can open a new comment:
 @Copilot implement all your review suggestions
 ```
 
-### Step 4: Grouped Changes (Optional)
+### Step 5: Grouped Changes (Optional)
 
 ## Copilot Group Changes in PRs :copilot: 📦
 
